@@ -1,7 +1,7 @@
 ""=====[ Convert to Unicode defaults ]===============================
-"
-"setglobal termencoding=utf-8 fileencodings=
-"scriptencoding utf-8
+
+setglobal termencoding=utf-8 fileencodings=
+scriptencoding utf-8
 "
 "autocmd BufNewFile,BufRead  *   if &modifiable 
 "autocmd BufNewFile,BufRead  *       set encoding=utf-8
