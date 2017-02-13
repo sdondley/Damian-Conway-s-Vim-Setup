@@ -7,7 +7,7 @@ runtime plugin/git-basic.vim
 " SD nifty. now I can do away with a command in my git-basic.vim file
 augroup VimReload
 autocmd!
-    autocmd BufWritePost .vimrc source %
+    autocmd BufWritePost [^(tmp/)].vimrc source %
 augroup END
 
 
@@ -16,7 +16,7 @@ augroup END
 setglobal termencoding=utf-8 fileencodings=
 scriptencoding utf-8
 
-autocmd BufNewFile,BufRead  *   if &modifiable 
+autocmd BufNewFile,BufRead  *   if &modifiable
 autocmd BufNewFile,BufRead  *       set encoding=utf-8
 autocmd BufNewFile,BufRead  *   endif
 
@@ -149,196 +149,210 @@ call s:conditional_nnoremap( 'gugu' )
 call s:conditional_nnoremap( 'guu' )
 call s:conditional_nnoremap( 'gv' )
 call s:conditional_nnoremap( 'gw' )
+" SD Conway kept this commented out for some reason
 "call s:conditional_nnoremap( 'gx' )
 "
 " Make gn jump into visual block mode, instead if plain visual mode
-"nnoremap gn  gn<C-V>
-"
-"
-""====[ Use persistent undo ]=================
-"
-"if has('persistent_undo')
-"    " Save all undo files in a single location (less messy, more risky)...
-"    set undodir=$HOME/.VIM_UNDO_FILES
-"
-"    " Save a lot of back-history...
-"    set undolevels=5000
-"
-"    " Actually switch on persistent undo
-"    set undofile
-"
-"endif
-"
-"
-""====[ Goto last location in non-empty files ]=======
-"
-"autocmd BufReadPost *  if line("'\"") > 1 && line("'\"") <= line("$")
-"                   \|     exe "normal! g`\""
-"                   \|  endif
-"
-"
-""====[ I'm sick of typing :%s/.../.../g ]=======
-"
-"Nmap S  [Shortcut for :s///g]  :%s//g<LEFT><LEFT>
-"vmap S                         :Blockwise s//g<LEFT><LEFT>
-"
-"Nmap <expr> M  [Shortcut for :s/<last match>//g]  ':%s/' . @/ . '//g<LEFT><LEFT>'
-"vmap <expr> M                                     ':s/' . @/ . '//g<LEFT><LEFT>'
-"
-""====[ Toggle visibility of naughty characters ]============
-"
-"" Make naughty characters visible...
-"" (uBB is right double angle, uB7 is middle dot)
-"set lcs=tab:⇒·,trail:␣,nbsp:~"
-"highlight InvisibleSpaces ctermfg=Black ctermbg=Black
-"call matchadd('InvisibleSpaces', '\s\+\%#', 100)
-"
-"augroup VisibleNaughtiness
-"    autocmd!
-"    autocmd BufEnter  *       set list
-"    autocmd BufEnter  *.txt   set nolist
-"    autocmd BufEnter  *.vp*   set nolist
-"    autocmd BufEnter  *       if !&modifiable
-"    autocmd BufEnter  *           set nolist
-"    autocmd BufEnter  *       endif
-"augroup END
-"
-"
-""====[ Set up smarter search behaviour ]=======================
-"
-"set incsearch       "Lookahead as search pattern is specified
-"set ignorecase      "Ignore case in all searches...
-"set smartcase       "...unless uppercase letters used
-"
-"set hlsearch        "Highlight all matches
-"highlight clear Search
-"highlight       Search    ctermfg=White
-"
-""Delete in normal mode to switch off highlighting till next search and clear messages...
-"Nmap <silent> <BS> [Cancel highlighting]  :call HLNextOff() <BAR> :nohlsearch <BAR> :call VG_Show_CursorColumn('off')<CR>
-"
-""Double-delete to remove trailing whitespace...
-"Nmap <silent> <BS><BS>  [Remove trailing whitespace] mz:call TrimTrailingWS()<CR>`z
-"
-"function! TrimTrailingWS ()
-"    if search('\s\+$', 'cnw')
-"        :%s/\s\+$//g
-"    endif
-"endfunction
-"
-"
-""====[ Handle encoding issues on a Macos terminal]============
-"
-"set encoding=latin1
-"
-"Nmap <silent> U  [Toggle UTF8]  :call ToggleUTF8()<CR><CR>:echo '[' . &fileencoding . ']'<CR>
-"Nmap <silent> UU [Toggle Unicode terminal]  :call ToggleTerminal()<CR><CR>
-"
-"function! ToggleUTF8 ()
-"    if &fileencoding =~ 'utf-8'
-"        set fileencoding=latin1
-"        set termencoding=
-"        !osascript -e 'tell application "Terminal" to set current settings of front window to settings set "stdterminal"'
-"    else
-"        set fileencoding=utf8
-"        set termencoding=utf8
-"        !osascript -e 'tell application "Terminal" to set current settings of front window to settings set "stdterminal_unicode"'
-"    endif
-"endfunction
-"
-"let g:UnicodeTerminal = 0
-"function! ToggleTerminal ()
-"    if g:UnicodeTerminal
-"        !osascript -e 'tell application "Terminal" to set current settings of front window to settings set "stdterminal"'
-"        let g:UnicodeTerminal = 0
-"        set termencoding=
-"        echo '[Latin1 terminal]'
-"    else
-"        !osascript -e 'tell application "Terminal" to set current settings of front window to settings set "stdterminal_unicode"'
-"        let g:UnicodeTerminal = 1
-"        set termencoding=utf8
-"        echo '[Unicode terminal]'
-"    endif
-"endfunction
-"
-"
-"
+" SD this seems weird, it jumps you to the middle of the file
+nnoremap gn  gn<C-V>
+
+
+"====[ Use persistent undo ]=================
+" SD See http://vimdoc.sourceforge.net/htmldoc/undo.html for reference
+" SD undo hisotry file name is .viminfo
+
+if has('persistent_undo')
+    " Save all undo files in a single location (less messy, more risky)...
+    set undodir=$HOME/.VIM_UNDO_FILES
+
+    " Save a lot of back-history...
+    set undolevels=5000
+
+    " Actually switch on persistent undo
+    set undofile
+
+endif
+
+
+"====[ Goto last location in non-empty files ]=======
+
+autocmd BufReadPost *  if line("'\"") > 1 && line("'\"") <= line("$")
+                   \|     exe "normal! g`\""
+                   \|  endif
+
+
+"====[ I'm sick of typing :%s/.../.../g ]=======
+" SD makes it easier to type substitutions
+Nmap S  [Shortcut for :s///g]  :%s//g<LEFT><LEFT>
+vmap S                         :Blockwise s//g<LEFT><LEFT>
+
+" SD inserts your last search into regex so you can replace it
+Nmap <expr> M  [Shortcut for :s/<last match>//g]  ':%s/' . @/ . '//g<LEFT><LEFT>'
+vmap <expr> M                                     ':s/' . @/ . '//g<LEFT><LEFT>'
+
+"====[ Toggle visibility of naughty characters ]============
+
+" Make naughty characters visible...
+" (uBB is right double angle, uB7 is middle dot)
+" SD lcs is short for 'listchars'
+" Makes trailing spaces, tabs, and non-breaking spaces visible
+set lcs=tab:⇒·,trail:␣,nbsp:~"
+highlight InvisibleSpaces ctermfg=Black ctermbg=Black
+call matchadd('InvisibleSpaces', '\s\+\%#', 100)
+
+augroup VisibleNaughtiness
+    autocmd!
+    autocmd BufEnter  *       set list
+    autocmd BufEnter  *.txt   set nolist
+    autocmd BufEnter  *.vp*   set nolist
+    autocmd BufEnter  *       if !&modifiable
+    autocmd BufEnter  *           set nolist
+    autocmd BufEnter  *       endif
+augroup END
+
+
+"====[ Set up smarter search behaviour ]=======================
+" SD not sure why "highlight clear Search is needed"
+" SD the HLNextOff() function is in the hlnext.vim plugin
+" SD The hlnext plugin adds special highligting for active searched term so you
+" can see where your cursor is
+" SD The VG_Show_CursorColumn() is in vistualguide.vim plugin
+set incsearch       "Lookahead as search pattern is specified
+set ignorecase      "Ignore case in all searches...
+set smartcase       "...unless uppercase letters used
+
+set hlsearch        "Highlight all matches
+highlight clear Search
+highlight       Search    ctermfg=White
+
+"Delete in normal mode to switch off highlighting till next search and clear messages...
+Nmap <silent> <BS> [Cancel highlighting]  :call HLNextOff() <BAR> :nohlsearch <BAR> :call VG_Show_CursorColumn('off')<CR>
+
+"Double-delete to remove trailing whitespace...
+Nmap <silent> <BS><BS>  [Remove trailing whitespace] mz:call TrimTrailingWS()<CR>`z
+
+function! TrimTrailingWS ()
+    if search('\s\+$', 'cnw')
+        :%s/\s\+$//g
+    endif
+endfunction
+
+
+"====[ Handle encoding issues on a Macos terminal]============
+
+set encoding=latin1
+
+Nmap <silent> U  [Toggle UTF8]  :call ToggleUTF8()<CR><CR>:echo '[' . &fileencoding . ']'<CR>
+Nmap <silent> UU [Toggle Unicode terminal]  :call ToggleTerminal()<CR><CR>
+
+function! ToggleUTF8 ()
+    if &fileencoding =~ 'utf-8'
+        set fileencoding=latin1
+        set termencoding=
+        !osascript -e 'tell application "Terminal" to set current settings of front window to settings set "stdterminal"'
+    else
+        set fileencoding=utf8
+        set termencoding=utf8
+        !osascript -e 'tell application "Terminal" to set current settings of front window to settings set "stdterminal_unicode"'
+    endif
+endfunction
+
+let g:UnicodeTerminal = 0
+function! ToggleTerminal ()
+    if g:UnicodeTerminal
+        !osascript -e 'tell application "Terminal" to set current settings of front window to settings set "stdterminal"'
+        let g:UnicodeTerminal = 0
+        set termencoding=
+        echo '[Latin1 terminal]'
+    else
+        !osascript -e 'tell application "Terminal" to set current settings of front window to settings set "stdterminal_unicode"'
+        let g:UnicodeTerminal = 1
+        set termencoding=utf8
+        echo '[Unicode terminal]'
+    endif
+endfunction
+
+
+
 ""====[ Set background hint (if possible) ]=============
 "
+" SD not sure why Conway commented out or what it does
 ""if $VIMBACKGROUND != ""
 ""    exec 'set background=' . $VIMBACKGROUND
 ""else
 ""    set background=dark
 ""endif
-"
-"set background=dark
-"
-"
-""======[ Magically build interim directories if necessary ]===================
-"
-"function! AskQuit (msg, options, quit_option)
-"    if confirm(a:msg, a:options) == a:quit_option
-"        exit
-"    endif
-"endfunction
-"
-"function! EnsureDirExists ()
-"    let required_dir = expand("%:h")
-"    if !isdirectory(required_dir)
-"        call AskQuit("Parent directory '" . required_dir . "' doesn't exist.",
-"             \       "&Create it\nor &Quit?", 2)
-"
-"        try
-"            call mkdir( required_dir, 'p' )
-"        catch
-"            call AskQuit("Can't create '" . required_dir . "'",
-"            \            "&Quit\nor &Continue anyway?", 1)
-"        endtry
-"    endif
-"endfunction
-"
-"augroup AutoMkdir
-"    autocmd!
-"    autocmd  BufNewFile  *  :call EnsureDirExists()
-"augroup END
-"
-"
-""=====[ Enable smartwrapping ]==================================
-"
-"" No smartwrapping in any of these files...
-""let g:SW_IGNORE_FILES = '.vimrc,*.vim,*.pl,*.pm,**/bin/**'
-"
-"" set comments-=s1:/*,mb:*,ex:*/      "Don't recognize C comments
-"" set comments-=:XCOMM                "Don't recognize lmake comments
-"" set comments-=:%                    "Don't recognize PostScript comments
-"" set comments-=:#                    "Don't recognize Perl/shell comments
-"" set comments+=fb:*                  "Star-space is a bullet
-"" set comments+=fb:-                  "Dash-space is a bullets
-"
-"set formatoptions-=cro
-"
-"set wrapmargin=2                            "Wrap 2 characters from the edge of the window
-""set cinwords = ""                           "But not for C-like keywords
-"
-""=======[ Fix smartindent stupidities ]============
-"
-"set autoindent                              "Retain indentation on next line
-"set smartindent                             "Turn on autoindenting of blocks
-"
-"
-"nnoremap <silent> >> :call ShiftLine()<CR>|               "And no shift magic on comments
-"
-"function! ShiftLine()
-"    set nosmartindent
-"    normal! >>
-"    set smartindent
-"endfunction
-"
-"
-"
+
+set background=dark
+
+
+"======[ Magically build interim directories if necessary ]===================
+
+function! AskQuit (msg, options, quit_option)
+    if confirm(a:msg, a:options) == a:quit_option
+        exit
+    endif
+endfunction
+
+function! EnsureDirExists ()
+    let required_dir = expand("%:h")
+    if !isdirectory(required_dir)
+        call AskQuit("Parent directory '" . required_dir . "' doesn't exist.",
+             \       "&Create it\nor &Quit?", 2)
+
+        try
+            call mkdir( required_dir, 'p' )
+        catch
+            call AskQuit("Can't create '" . required_dir . "'",
+           \            "&Quit\nor &Continue anyway?", 1)
+        endtry
+    endif
+endfunction
+
+augroup AutoMkdir
+    autocmd!
+    autocmd  BufNewFile  *  :call EnsureDirExists()
+augroup END
+
+
+"=====[ Enable smartwrapping ]==================================
+
+" No smartwrapping in any of these files...
+" SD Conway had these lines commented out
+"let g:SW_IGNORE_FILES = '.vimrc,*.vim,*.pl,*.pm,**/bin/**'
+
+" set comments-=s1:/*,mb:*,ex:*/      "Don't recognize C comments
+" set comments-=:XCOMM                "Don't recognize lmake comments
+" set comments-=:%                    "Don't recognize PostScript comments
+" set comments-=:#                    "Don't recognize Perl/shell comments
+" set comments+=fb:*                  "Star-space is a bullet
+" set comments+=fb:-                  "Dash-space is a bullets
+
+set formatoptions-=cro
+
+set wrapmargin=2                            "Wrap 2 characters from the edge of the window
+" SD left commented out by Conway
+"set cinwords = ""                           "But not for C-like keywords
+
+"=======[ Fix smartindent stupidities ]============
+
+set autoindent                              "Retain indentation on next line
+set smartindent                             "Turn on autoindenting of blocks
+
+
+nnoremap <silent> >> :call ShiftLine()<CR>|               "And no shift magic on comments
+
+function! ShiftLine()
+    set nosmartindent
+    normal! >>
+    set smartindent
+endfunction
+
+
+
 ""====[ I hate modelines ]===================
-"
-"set modelines=0
+" SD See https://www.cs.swarthmore.edu/help/vim/modelines.html for reference
+set modelines=0
 "
 "
 ""=====[ Quicker access to Ex commands ]==================
