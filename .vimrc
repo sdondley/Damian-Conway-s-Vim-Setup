@@ -6,11 +6,11 @@ scriptencoding utf-8
 autocmd BufNewFile,BufRead  *   if &modifiable 
 autocmd BufNewFile,BufRead  *       set encoding=utf-8
 autocmd BufNewFile,BufRead  *   endif
-"
-"
-""====[ Ensure autodoc'd plugins are supported ]===========
-"
-"runtime plugin/_autodoc.vim
+
+
+"====[ Ensure autodoc'd plugins are supported ]===========
+
+runtime plugin/_autodoc.vim
 "
 "
 ""====[ Work out what kind of file this is ]========
