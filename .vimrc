@@ -11,24 +11,25 @@ autocmd BufNewFile,BufRead  *   endif
 "====[ Ensure autodoc'd plugins are supported ]===========
 
 runtime plugin/_autodoc.vim
-"
-"
-""====[ Work out what kind of file this is ]========
-"
-"filetype plugin indent on
-"
-"autocmd BufNewFile,BufRead  *.t                     setfiletype perl
+
+
+"====[ Work out what kind of file this is ]========
+
+filetype plugin indent on
+
+autocmd BufNewFile,BufRead  *.t                     setfiletype perl
+" don't need this, whatever it is
 "autocmd BufNewFile,BufRead  *.itn                   setfiletype itn
-"
-"
-""=====[ Comments are important ]==================
-"
-"highlight Comment term=bold ctermfg=white
-"
-"
-""=====[ Enable Nmap command for documented mappings ]================
-"
-"runtime plugin/documap.vim
+
+
+"=====[ Comments are important ]==================
+
+highlight Comment term=bold ctermfg=white
+
+
+"=====[ Enable Nmap command for documented mappings ]================
+
+runtime plugin/documap.vim
 "
 "
 ""====[ Edit and auto-update this config file and plugins ]==========
