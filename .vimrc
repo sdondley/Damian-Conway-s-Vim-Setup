@@ -2,10 +2,10 @@
 
 setglobal termencoding=utf-8 fileencodings=
 scriptencoding utf-8
-"
-"autocmd BufNewFile,BufRead  *   if &modifiable 
-"autocmd BufNewFile,BufRead  *       set encoding=utf-8
-"autocmd BufNewFile,BufRead  *   endif
+
+autocmd BufNewFile,BufRead  *   if &modifiable 
+autocmd BufNewFile,BufRead  *       set encoding=utf-8
+autocmd BufNewFile,BufRead  *   endif
 "
 "
 ""====[ Ensure autodoc'd plugins are supported ]===========
