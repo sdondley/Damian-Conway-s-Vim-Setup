@@ -1,3 +1,16 @@
+:mapclear | mapclear <buffer> | mapclear! | mapclear! <buffer>
+nnoremap ;c 12G<C-v>GI"<ESC>1G
+nnoremap ;u 12G<C-v>Gx1G
+runtime plugin/git-basic.vim
+"====[ Edit and auto-update this config file and plugins ]==========
+
+" SD nifty. now I can do away with a command in my git-basic.vim file
+augroup VimReload
+autocmd!
+    autocmd BufWritePost .vimrc source %
+augroup END
+
+
 ""=====[ Convert to Unicode defaults ]===============================
 
 setglobal termencoding=utf-8 fileencodings=
@@ -18,7 +31,7 @@ runtime plugin/_autodoc.vim
 filetype plugin indent on
 
 autocmd BufNewFile,BufRead  *.t                     setfiletype perl
-" don't need this, whatever it is
+" SD don't need this, whatever it is
 "autocmd BufNewFile,BufRead  *.itn                   setfiletype itn
 
 
@@ -26,115 +39,119 @@ autocmd BufNewFile,BufRead  *.t                     setfiletype perl
 
 highlight Comment term=bold ctermfg=white
 
-
 "=====[ Enable Nmap command for documented mappings ]================
-
+" SD looks like a plugin for listing mapped keys in normal mode
 runtime plugin/documap.vim
-"
-"
-""====[ Edit and auto-update this config file and plugins ]==========
-"
-"augroup VimReload
-"autocmd!
-"    autocmd BufWritePost $MYVIMRC source $MYVIMRC
-"augroup END
-"
-"Nmap <silent>  ;v   [Edit .vimrc]          :next $MYVIMRC<CR>
-"Nmap           ;vv  [Edit .vim/plugin/...] :next ~/.vim/plugin/
-"
-"
-""====[ Edit my temporary working files ]====================
-"
-"Nmap tt  [Edit temporary files] :next ~/tmp/temporary_file
-"
-"
-"
-""=====[ Edit files in local bin directory ]========
-"
+
+
+
+nmap g :source
+
+" SD maps for quickly editing .vimrc file and plugins
+Nmap <silent>  ;v   [Edit .vimrc]          :next $MYVIMRC<CR>
+Nmap           ;vv  [Edit .vim/plugin/...] :next ~/.vim/plugin/
+
+
+"====[ Edit my temporary working files ]====================
+
+" SD not sure why this is useful. Maybe as some kind of scratchpad.
+Nmap tt  [Edit temporary files] :next ~/tmp/temporary_file
+
+
+
+"=====[ Edit files in local bin directory ]========
+
+" SD for quickly editing file in bin folder. Nice.
 "Nmap ;b  [Edit ~/bin/...]  :next ~/bin/
-"
-"
-""=====[ Some of Vim's defaults are just annoying ]============
-"
-"" :read and :write shouldn't set #
+
+
+"=====[ Some of Vim's defaults are just annoying ]============
+
+" :read and :write shouldn't set #
+
+" SD cpo is short for cpoptions, short for "compatible options"
+" see http://vimdoc.sourceforge.net/htmldoc/options.html#'cpoptions' for
+" reference. This removes the 'a' and 'A' option flags.
+" Also see for detailed explanation http://vi.stackexchange.com/questions/11388/what-do-a-and-a-cpoptions-do-exactly/11389#11389
 "set cpo-=aA
+
+
+"====[ Go back to alternate file (but retain other g<whatever> mappings)]====
+
+" SD, not sure what an alternate file is
+nmap g  :w<CR>:e #<CR>
+
+" SD This function appears to set normal mode remaps if they don't already exist
+function! s:conditional_nnoremap ( name )
+    if maparg(a:name, 'n') == ""
+        execute 'nnoremap  <unique> ' . a:name . ' ' . a:name
+    endif
+endfunction
+call s:conditional_nnoremap( 'g,' )
+call s:conditional_nnoremap( 'g;' )
+call s:conditional_nnoremap( 'g~' )
+call s:conditional_nnoremap( 'g~~' )
+call s:conditional_nnoremap( 'g~g~' )
+call s:conditional_nnoremap( 'g#' )
+call s:conditional_nnoremap( 'g$' )
+call s:conditional_nnoremap( 'g&' )
+call s:conditional_nnoremap( "g'" )
+call s:conditional_nnoremap( 'g*' )
+call s:conditional_nnoremap( 'g0' )
+call s:conditional_nnoremap( 'g8' )
+call s:conditional_nnoremap( 'g<' )
+call s:conditional_nnoremap( 'g<C-G>' )
+call s:conditional_nnoremap( 'g<C-H>' )
+call s:conditional_nnoremap( 'g<C-]>' )
+call s:conditional_nnoremap( 'g<Down>' )
+call s:conditional_nnoremap( 'g<End>' )
+call s:conditional_nnoremap( 'g<Home>' )
+call s:conditional_nnoremap( 'g<LeftMouse>' )
+call s:conditional_nnoremap( 'g<MiddleMouse>' )
+call s:conditional_nnoremap( 'g<RightMouse>' )
+call s:conditional_nnoremap( 'g<Up>' )
+call s:conditional_nnoremap( 'g?' )
+call s:conditional_nnoremap( 'g??' )
+call s:conditional_nnoremap( 'g?g?' )
+call s:conditional_nnoremap( 'g@' )
+call s:conditional_nnoremap( 'gD' )
+call s:conditional_nnoremap( 'gE' )
+call s:conditional_nnoremap( 'gF' )
+call s:conditional_nnoremap( 'gH' )
+call s:conditional_nnoremap( 'gI' )
+call s:conditional_nnoremap( 'gJ' )
+call s:conditional_nnoremap( 'gP' )
+call s:conditional_nnoremap( 'gR' )
+call s:conditional_nnoremap( 'gU' )
+call s:conditional_nnoremap( 'gUU' )
+call s:conditional_nnoremap( 'gUgU' )
+call s:conditional_nnoremap( 'gV' )
+call s:conditional_nnoremap( 'g]' )
+call s:conditional_nnoremap( 'g^' )
+call s:conditional_nnoremap( 'g`' )
+call s:conditional_nnoremap( 'ga' )
+call s:conditional_nnoremap( 'gd' )
+call s:conditional_nnoremap( 'ge' )
+call s:conditional_nnoremap( 'gf' )
+call s:conditional_nnoremap( 'gg' )
+call s:conditional_nnoremap( 'gh' )
+call s:conditional_nnoremap( 'gi' )
+call s:conditional_nnoremap( 'gj' )
+call s:conditional_nnoremap( 'gk' )
+call s:conditional_nnoremap( 'gm' )
+call s:conditional_nnoremap( 'go' )
+call s:conditional_nnoremap( 'gp' )
+call s:conditional_nnoremap( 'gq' )
+call s:conditional_nnoremap( 'gr' )
+call s:conditional_nnoremap( 'gs' )
+call s:conditional_nnoremap( 'gu' )
+call s:conditional_nnoremap( 'gugu' )
+call s:conditional_nnoremap( 'guu' )
+call s:conditional_nnoremap( 'gv' )
+call s:conditional_nnoremap( 'gw' )
+"call s:conditional_nnoremap( 'gx' )
 "
-"
-"
-""====[ Go back to alternate file (but retain other g<whatever> mappings)]====
-"
-"nmap g  :w<CR>:e #<CR>
-"
-"function! s:conditional_nnoremap ( name )
-"    if maparg(a:name, 'n') == ""
-"        execute 'nnoremap  <unique> ' . a:name . ' ' . a:name
-"    endif
-"endfunction
-"call s:conditional_nnoremap( 'g,' )
-"call s:conditional_nnoremap( 'g;' )
-"call s:conditional_nnoremap( 'g~' )
-"call s:conditional_nnoremap( 'g~~' )
-"call s:conditional_nnoremap( 'g~g~' )
-"call s:conditional_nnoremap( 'g#' )
-"call s:conditional_nnoremap( 'g$' )
-"call s:conditional_nnoremap( 'g&' )
-"call s:conditional_nnoremap( "g'" )
-"call s:conditional_nnoremap( 'g*' )
-"call s:conditional_nnoremap( 'g0' )
-"call s:conditional_nnoremap( 'g8' )
-"call s:conditional_nnoremap( 'g<' )
-"call s:conditional_nnoremap( 'g<C-G>' )
-"call s:conditional_nnoremap( 'g<C-H>' )
-"call s:conditional_nnoremap( 'g<C-]>' )
-"call s:conditional_nnoremap( 'g<Down>' )
-"call s:conditional_nnoremap( 'g<End>' )
-"call s:conditional_nnoremap( 'g<Home>' )
-"call s:conditional_nnoremap( 'g<LeftMouse>' )
-"call s:conditional_nnoremap( 'g<MiddleMouse>' )
-"call s:conditional_nnoremap( 'g<RightMouse>' )
-"call s:conditional_nnoremap( 'g<Up>' )
-"call s:conditional_nnoremap( 'g?' )
-"call s:conditional_nnoremap( 'g??' )
-"call s:conditional_nnoremap( 'g?g?' )
-"call s:conditional_nnoremap( 'g@' )
-"call s:conditional_nnoremap( 'gD' )
-"call s:conditional_nnoremap( 'gE' )
-"call s:conditional_nnoremap( 'gF' )
-"call s:conditional_nnoremap( 'gH' )
-"call s:conditional_nnoremap( 'gI' )
-"call s:conditional_nnoremap( 'gJ' )
-"call s:conditional_nnoremap( 'gP' )
-"call s:conditional_nnoremap( 'gR' )
-"call s:conditional_nnoremap( 'gU' )
-"call s:conditional_nnoremap( 'gUU' )
-"call s:conditional_nnoremap( 'gUgU' )
-"call s:conditional_nnoremap( 'gV' )
-"call s:conditional_nnoremap( 'g]' )
-"call s:conditional_nnoremap( 'g^' )
-"call s:conditional_nnoremap( 'g`' )
-"call s:conditional_nnoremap( 'ga' )
-"call s:conditional_nnoremap( 'gd' )
-"call s:conditional_nnoremap( 'ge' )
-"call s:conditional_nnoremap( 'gf' )
-"call s:conditional_nnoremap( 'gg' )
-"call s:conditional_nnoremap( 'gh' )
-"call s:conditional_nnoremap( 'gi' )
-"call s:conditional_nnoremap( 'gj' )
-"call s:conditional_nnoremap( 'gk' )
-"call s:conditional_nnoremap( 'gm' )
-"call s:conditional_nnoremap( 'go' )
-"call s:conditional_nnoremap( 'gp' )
-"call s:conditional_nnoremap( 'gq' )
-"call s:conditional_nnoremap( 'gr' )
-"call s:conditional_nnoremap( 'gs' )
-"call s:conditional_nnoremap( 'gu' )
-"call s:conditional_nnoremap( 'gugu' )
-"call s:conditional_nnoremap( 'guu' )
-"call s:conditional_nnoremap( 'gv' )
-"call s:conditional_nnoremap( 'gw' )
-""call s:conditional_nnoremap( 'gx' )
-"
-"" Make gn jump into visual block mode, instead if plain visual mode
+" Make gn jump into visual block mode, instead if plain visual mode
 "nnoremap gn  gn<C-V>
 "
 "
