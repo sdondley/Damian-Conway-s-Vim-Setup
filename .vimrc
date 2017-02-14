@@ -532,7 +532,6 @@ set scrolloff=20                     "Scroll when 2 lines from top/bottom
 
 " Back up the current file
 Nmap BB [Back up current file]  :!bak -q %<CR><CR>:echomsg "Backed up" expand('%')<CR>
-" some lame comment
 
 
 ""=====[ Remap various keys to something more useful ]========================
