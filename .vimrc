@@ -1,8 +1,11 @@
+" SD ===== my vim changes ========
+set number
+syntax on
+nnoremap nn :set number!<CR>
 ":mapclear | mapclear <buffer> | mapclear! | mapclear! <buffer>
 "nnoremap ;c 12G<C-v>GI"<ESC>1G
 "nnoremap ;u 12G<C-v>Gx1G
 "runtime plugin/git-basic.vim
-
 
 ""=====[ Convert to Unicode defaults ]===============================
 
@@ -1498,8 +1501,8 @@ nmap <silent>       ++  vip++
 
 "====[ Configure eqalignsimple ]=================================
 
-"EQAS_Align('\S:',         '',   '\s')
-"EQAS_Align('[[:punct:]]', '',   '\s')
+"call EQAS_Align('\S:',         '',   '\s')
+"call EQAS_Align('[[:punct:]]', '',   '\s')
 
 
 
