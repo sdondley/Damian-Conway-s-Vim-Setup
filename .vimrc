@@ -523,8 +523,8 @@ set timeout timeoutlen=300 ttimeoutlen=300
 "set thesaurus+=~/Documents/thesaurus    "Add thesaurus file for ^X^T
 "set dictionary+=~/Documents/dictionary  "Add dictionary file for ^X^K
 
-" SD Changed this to 20
-set scrolloff=20                     "Scroll when 2 lines from top/bottom
+" SD Changed this to 10
+set scrolloff=10                     "Scroll when 2 lines from top/bottom
 
 
 
@@ -1471,325 +1471,326 @@ augroup MarkMargin
     autocmd  BufEnter  *.vp*   :call MarkMargin(0)
 augroup END
 
-
+" SD Need to install accelerated-jk.git or this will break VIM badly by
+" freezing the cursor on you
 ""====[ Accelerated up and down on wrapped lines ]============
 "
 ""nnoremap  j  gj
 ""nnoremap  k  gk
-"nmap j <Plug>(accelerated_jk_gj)
-"nmap k <Plug>(accelerated_jk_gk)
+nmap j <Plug>(accelerated_jk_gj)
+nmap k <Plug>(accelerated_jk_gk)
 "
 "
-""====[ Pathogen support ]======================
+"====[ Pathogen support ]======================
+
+call pathogen#infect()
+call pathogen#helptags()
+
+
+"====[ Mapping to analyse a list of numbers ]====================
+
+" Need to load this early, so we can override its nmapped ++
+runtime plugin/eqalignsimple.vim
+
+vmap <silent><expr> ++  VMATH_YankAndAnalyse()
+nmap <silent>       ++  vip++
+
+
+"====[ Configure eqalignsimple ]=================================
 "
-"call pathogen#infect()
-"call pathogen#helptags()
+"EQAS_align('\S:',         '',   '\s')
+"EQAS_align('[[:punct:]]', '',   '\s')
+
+
+
+"====[ Make digraphs easier to get right (various versions) ]=================
+
+inoremap <expr>  <C-J>       HUDG_GetDigraph()
+inoremap <expr>  <C-K>       BDG_GetDigraph()
+inoremap <expr>  <C-L>       HUDigraphs()
+
+function! HUDigraphs ()
+    digraphs
+    call getchar()
+    return "\<C-K>"
+endfunction
+
+
+"====[ Extend a previous match ]=====================================
+
+nnoremap //   /<C-R>/
+nnoremap ///  /<C-R>/\<BAR>
+
+
+
+"====[ Toggle between lists and bulleted lists ]======================
+
+Nmap <silent> ;l [Toggle list format (bullets <-> commas)]  :call ListTrans_toggle_format()<CR>f
+vmap <silent> ;l                                            :call ListTrans_toggle_format('visual')<CR>f
+
+
+"=====[ Select a table column in visual mode ]========================
+
+vnoremap <silent><expr> c  VTC_select()
+
+
+"=====[ Make * respect smartcase and also set @/ (to enable 'n' and 'N') ]======
+
+nmap *  :let @/ = '\<'.expand('<cword>').'\>' ==? @/ ? @/ : '\<'.expand('<cword>').'\>'<CR>n
+
+
+"=====[ Much smarter "edit next file" command ]=======================
+
+nmap <silent><expr>  e  g:GTF_goto_file()
+nmap <silent><expr>  q  g:GTF_goto_file('`')
+
+
+
+"=====[ Smarter interstitial completions of identifiers ]=============
 "
-"
-""====[ Mapping to analyse a list of numbers ]====================
-"
-"" Need to load this early, so we can override its nmapped ++
-"runtime plugin/eqalignsimple.vim
-"
-"vmap <silent><expr> ++  VMATH_YankAndAnalyse()
-"nmap <silent>       ++  vip++
-"
-"
-""====[ Configure eqalignsimple ]=================================
-""
-""EQAS_align('\S:',         '',   '\s')
-""EQAS_align('[[:punct:]]', '',   '\s')
-"
-"
-"
-""====[ Make digraphs easier to get right (various versions) ]=================
-"
-"inoremap <expr>  <C-J>       HUDG_GetDigraph()
-"inoremap <expr>  <C-K>       BDG_GetDigraph()
-"inoremap <expr>  <C-L>       HUDigraphs()
-"
-"function! HUDigraphs ()
-"    digraphs
-"    call getchar()
-"    return "\<C-K>"
-"endfunction
-"
-"
-""====[ Extend a previous match ]=====================================
-"
-"nnoremap //   /<C-R>/
-"nnoremap ///  /<C-R>/\<BAR>
-"
-"
-"
-""====[ Toggle between lists and bulleted lists ]======================
-"
-"Nmap <silent> ;l [Toggle list format (bullets <-> commas)]  :call ListTrans_toggle_format()<CR>f
-"vmap <silent> ;l                                            :call ListTrans_toggle_format('visual')<CR>f
-"
-"
-""=====[ Select a table column in visual mode ]========================
-"
-"vnoremap <silent><expr> c  VTC_select()
-"
-"
-""=====[ Make * respect smartcase and also set @/ (to enable 'n' and 'N') ]======
-"
-"nmap *  :let @/ = '\<'.expand('<cword>').'\>' ==? @/ ? @/ : '\<'.expand('<cword>').'\>'<CR>n
-"
-"
-""=====[ Much smarter "edit next file" command ]=======================
-"
-"nmap <silent><expr>  e  g:GTF_goto_file()
-"nmap <silent><expr>  q  g:GTF_goto_file('`')
-"
-"
-"
-""=====[ Smarter interstitial completions of identifiers ]=============
-""
-"" When autocompleting within an identifier, prevent duplications...
-"
-"augroup Undouble_Completions
-"    autocmd!
-"    autocmd CompleteDone *  call Undouble_Completions()
-"augroup None
-"
-"function! Undouble_Completions ()
-"    let col  = getpos('.')[2]
-"    let line = getline('.')
-"    call setline('.', substitute(line, '\(\k\+\)\%'.col.'c\zs\1', '', ''))
-"endfunction
-"
-"
-""=====[ Autocomplete Perl code ]===========================
-"" (Note insertion of X<C-H># to overcome smartindent's mania for C-like #'s)
-"
-""inoremap <silent> >  ><ESC>:call SmartArrow()<CR>a
-""inoremap <silent> #  X<C-H>#<C-R>=SmartOctothorpe()<CR>
-"inoremap <silent> #  X<C-H>#
-"
+" When autocompleting within an identifier, prevent duplications...
+
+augroup Undouble_Completions
+    autocmd!
+    autocmd CompleteDone *  call Undouble_Completions()
+augroup None
+
+function! Undouble_Completions ()
+    let col  = getpos('.')[2]
+    let line = getline('.')
+    call setline('.', substitute(line, '\(\k\+\)\%'.col.'c\zs\1', '', ''))
+endfunction
+
+
+"=====[ Autocomplete Perl code ]===========================
+" (Note insertion of X<C-H># to overcome smartindent's mania for C-like #'s)
+
+"inoremap <silent> >  ><ESC>:call SmartArrow()<CR>a
+"inoremap <silent> #  X<C-H>#<C-R>=SmartOctothorpe()<CR>
+inoremap <silent> #  X<C-H>#
+
+function! SmartArrow ()
+    if &filetype =~ '^perl' && search('=\%#>', 'bn', line('.'))
+        mark m
+        let [bufnum, lnum, col, off] = getpos('.')
+        let prefix = matchstr(getline('.'), '^.*=>\%'.(col+1).'v')
+        let arrow_count = len(split(prefix,'=>'))
+        let indent_pat = '^' . matchstr(getline('.'), '^\s*') . '\S'
+        let firstline  = search('^\%('. indent_pat . '\)\@!\|^\s*$','bnW') + 1
+        let lastline   = search('^\%('. indent_pat . '\)\@!\|^\s*$', 'nW') - 1
+        exec firstline.','.lastline.'!perltidyarrows'
+        normal 'm
+        while arrow_count
+            call search('=>','e',lnum)
+            let arrow_count -= 1
+        endwhile
+    endif
+endfunction
+
 "function! SmartArrow ()
-"    if &filetype =~ '^perl' && search('=\%#>', 'bn', line('.'))
-"        mark m
-"        let [bufnum, lnum, col, off] = getpos('.')
-"        let prefix = matchstr(getline('.'), '^.*=>\%'.(col+1).'v')
-"        let arrow_count = len(split(prefix,'=>'))
-"        let indent_pat = '^' . matchstr(getline('.'), '^\s*') . '\S'
-"        let firstline  = search('^\%('. indent_pat . '\)\@!\|^\s*$','bnW') + 1
-"        let lastline   = search('^\%('. indent_pat . '\)\@!\|^\s*$', 'nW') - 1
-"        exec firstline.','.lastline.'!perltidyarrows'
-"        normal 'm
-"        while arrow_count
-"            call search('=>','e',lnum)
-"            let arrow_count -= 1
-"        endwhile
-"    endif
-"endfunction
-"
-""function! SmartArrow ()
-""    if &filetype =~ '^perl' && search('^.*\S.*\s=>\%#$', 'bn', line('.'))
-""        return "\<ESC>"
-""            \. ":call EQAS_Align('nmap',{'pattern':'=>'})\<CR>"
-""            \. ":call EQAS_Align('nmap',{'pattern':'\\%(\\S\\s*\\)\\@<=#'})\<CR>"
-""            \. "$a"
-""    else
-""        return ""
-""    endif
-""endfunction
-""
-"function! SmartOctothorpe ()
-"    if &filetype =~ '^perl' && search('^.\{-}\S.\{-}\s#\%#$','bn')
+"    if &filetype =~ '^perl' && search('^.*\S.*\s=>\%#$', 'bn', line('.'))
 "        return "\<ESC>"
-"            \. ":call EQAS_Align('nmap',{'pattern':'\\%(\\S\\s\\)\\@<=#'})\<CR>"
-"            \. "$s"
+"            \. ":call EQAS_Align('nmap',{'pattern':'=>'})\<CR>"
+"            \. ":call EQAS_Align('nmap',{'pattern':'\\%(\\S\\s*\\)\\@<=#'})\<CR>"
+"            \. "$a"
 "    else
 "        return ""
 "    endif
 "endfunction
 "
-"
-""=====[ Improve ruler with optional word counts]=================================
-"
-"let g:BRF_new_rulerformat = '%22(%l,%v %= %{BRF_WordCount()}w  %P%)'
-"let g:BRF_interval = 1
-"
-"function! BRF_WordCount()
-"    " Skip an increasing percentage of increasingly expensive updates, as the file gets longer
-"    let g:BRF_interval += 1
-"    if exists("b:BRF_wordcount")
-"        if g:BRF_interval < b:BRF_wordcount / 500
-"            return '~' . b:BRF_wordcount
-"        endif
-"        let g:BRF_interval = 1
-"    endif
-"
-"    " Otherwise, recount the file...
-"    if &modified || !exists("b:BRF_wordcount")
-"        let lines = join(getline(1,'$'), ' ')
-"        let lines = substitute(lines, '\a[''-]\a',      'X', 'g')
-"        let lines = substitute(lines, '[[:alnum:]]\+',  'X', 'g')
-"        let lines = substitute(lines, '[^[:alnum:]]\+', '',  'g')
-"        let b:BRF_wordcount = strlen(lines)
-"    endif
-"
-"    " Return the precise count...
-"    return b:BRF_wordcount
-"endfunction
-"
-"function! BRF_ToggleRuler ()
-"    if strlen(&rulerformat)
-"        let &rulerformat = ''
-"    else
-"        let &rulerformat = g:BRF_new_rulerformat
-"    endif
-"    set ruler
-"    redraw
-"endfunction
-"
-"nmap <silent> ;w :silent call BRF_ToggleRuler()<CR><C-L>
-"
-"let &rulerformat = g:BRF_new_rulerformat
-"set ruler
-"
-"
-""======[ Fix colourscheme for 256 colours ]============================
-"
-"highlight Visual       ctermfg=Yellow ctermbg=26    " 26 = Dusty blue background
-"highlight SpecialKey   cterm=bold ctermfg=Blue
-"
-"
-""======[ Add a Y command for incremental yank in Visual mode ]==============
-"
-"vnoremap <silent>       Y   <ESC>:silent let @y = @"<CR>gv"Yy:silent let @" = @y<CR>
-"nnoremap <silent>       YY  :call Incremental_YY()<CR>
-"nnoremap <silent><expr> Y         Incremental_Y()
-"
-"function! Incremental_YY () range
-"    let @" .= join(getline(a:firstline, a:lastline), "\n") . "\n"
-"endfunction
-"
-"function! Incremental_Y ()
-"    let motion = nr2char(getchar())
-"    if motion == 'Y'
-"        call Incremental_YY()
-"        return
-"    elseif motion =~ '[ia]'
-"        let motion .= nr2char(getchar())
-"    elseif motion =~ '[/?]'
-"        let motion .= input(motion) . "\<CR>"
-"    endif
-"
-"    let @y = @"
-"    return '"Yy' . motion . ':let @" = @y' . "\<CR>"
-"endfunction
-"
-"
-""======[ Add a $$ command in Visual mode ]==============================
-"
-"vmap <silent>       ]   $"yygv_$
-"vmap <silent><expr> _$  Under_dollar_visual()
-"
-"function! Under_dollar_visual ()
-"    " Locate block being shifted...
-"    let maxcol = max(map(split(@y, "\n"), 'strlen(v:val)')) + getpos("'<")[2] - 2
-"
-"    " Return the selction that does the job...
-"    return maxcol . '|'
-"endfunction
-"
-""=====[ Diff against disk ]==========================================
-"
-"map <silent> zd :silent call DC_DiffChanges()<CR>
-"
-"" Change the fold marker to something more useful
-"function! DC_LineNumberOnly ()
-"    if v:foldstart == 1 && v:foldend == line('$')
-"        return '.. ' . v:foldend . '  (No difference)'
-"    else
-"        return '.. ' . v:foldend
-"    endif
-"endfunction
-"
-"" Track each buffer's initial state
-"augroup DC_TrackInitial
-"    autocmd!
-"    autocmd BufReadPost,BufNewFile  *   if !exists('b:DC_initial_state')
-"    autocmd BufReadPost,BufNewFile  *       let b:DC_initial_state = getline(1,'$')
-"    autocmd BufReadPost,BufNewFile  *   endif
-"augroup END
-"
-"highlight DC_DEEMPHASIZED ctermfg=grey
-"
-"function! DC_DiffChanges ()
-"    diffthis
-"    highlight Normal ctermfg=grey
-"    let initial_state = b:DC_initial_state
-"    set diffopt=context:2,filler,foldcolumn:0
-"    set fillchars=fold: 
-"    set foldcolumn=0
-"    setlocal foldtext=DC_LineNumberOnly()
-"    set number
-"
-""    aboveleft vnew
-"    belowright vnew
-"    normal 0
-"    silent call setline(1, initial_state)
-"    diffthis
-"    set diffopt=context:2,filler,foldcolumn:0
-"    set fillchars=fold: 
-"    set foldcolumn=0
-"    setlocal foldtext=DC_LineNumberOnly()
-"    set number
-"
-"    nmap <silent><buffer> zd :diffoff<CR>:q!<CR>:set diffopt& fillchars& number& foldcolumn=0<CR>:set nodiff<CR>:highlight Normal ctermfg=NONE<CR>
-"endfunction
-"
-"
-""=====[ ,, as => without delays ]===================
-"
-"inoremap <expr><silent>  ,  Smartcomma()
-"
-"function! Smartcomma ()
-"    let [bufnum, lnum, col, off, curswant] = getcurpos()
-"    if getline('.') =~ (',\%' . (col+off) . 'c')
-"        return "\<C-H>=>"
-"    else
-"        return ','
-"    endif
-"endfunction
-"
-"
-""=====[ Interface with ag ]======================
-"
-"set grepprg=ag\ --vimgrep\ $*
-"set grepformat=%f:%l:%c:%m
-"
-"
-""=====[ Decute startify ]================
-"
-"let g:startify_custom_header = []
-"
-"
-""=====[ Configure change-tracking ]========
-"
-"let g:changes_hl_lines=1
-"let g:changes_verbose=0
-"let g:changes_autocmd=1
-"
-"
-""=====[ Make netrw more instantly useful ]============
-"
-"let g:netrw_sort_by='time'
-"let g:netrw_sort_direction='reverse'
-"
-"
-""=====[ Config ditto ]=============
-"
-"highlight Ditto ctermfg=red
-"
-"let g:ditto_hlgroups = ['Ditto1']
-"let g:ditto_autocmd = "InsertLeave"
-"
-"
-"let g:ditto_min_word_length = 6
-"let g:ditto_min_repetitions = 2
+function! SmartOctothorpe ()
+    if &filetype =~ '^perl' && search('^.\{-}\S.\{-}\s#\%#$','bn')
+        return "\<ESC>"
+            \. ":call EQAS_Align('nmap',{'pattern':'\\%(\\S\\s\\)\\@<=#'})\<CR>"
+            \. "$s"
+    else
+        return ""
+    endif
+endfunction
+
+
+"=====[ Improve ruler with optional word counts]=================================
+
+let g:BRF_new_rulerformat = '%22(%l,%v %= %{BRF_WordCount()}w  %P%)'
+let g:BRF_interval = 1
+
+function! BRF_WordCount()
+    " Skip an increasing percentage of increasingly expensive updates, as the file gets longer
+    let g:BRF_interval += 1
+    if exists("b:BRF_wordcount")
+        if g:BRF_interval < b:BRF_wordcount / 500
+            return '~' . b:BRF_wordcount
+        endif
+        let g:BRF_interval = 1
+    endif
+
+    " Otherwise, recount the file...
+    if &modified || !exists("b:BRF_wordcount")
+        let lines = join(getline(1,'$'), ' ')
+        let lines = substitute(lines, '\a[''-]\a',      'X', 'g')
+        let lines = substitute(lines, '[[:alnum:]]\+',  'X', 'g')
+        let lines = substitute(lines, '[^[:alnum:]]\+', '',  'g')
+        let b:BRF_wordcount = strlen(lines)
+    endif
+
+    " Return the precise count...
+    return b:BRF_wordcount
+endfunction
+
+function! BRF_ToggleRuler ()
+    if strlen(&rulerformat)
+        let &rulerformat = ''
+    else
+        let &rulerformat = g:BRF_new_rulerformat
+    endif
+    set ruler
+    redraw
+endfunction
+
+nmap <silent> ;w :silent call BRF_ToggleRuler()<CR><C-L>
+
+let &rulerformat = g:BRF_new_rulerformat
+set ruler
+
+
+"======[ Fix colourscheme for 256 colours ]============================
+
+highlight Visual       ctermfg=Yellow ctermbg=26    " 26 = Dusty blue background
+highlight SpecialKey   cterm=bold ctermfg=Blue
+
+
+"======[ Add a Y command for incremental yank in Visual mode ]==============
+
+vnoremap <silent>       Y   <ESC>:silent let @y = @"<CR>gv"Yy:silent let @" = @y<CR>
+nnoremap <silent>       YY  :call Incremental_YY()<CR>
+nnoremap <silent><expr> Y         Incremental_Y()
+
+function! Incremental_YY () range
+    let @" .= join(getline(a:firstline, a:lastline), "\n") . "\n"
+endfunction
+
+function! Incremental_Y ()
+    let motion = nr2char(getchar())
+    if motion == 'Y'
+        call Incremental_YY()
+        return
+    elseif motion =~ '[ia]'
+        let motion .= nr2char(getchar())
+    elseif motion =~ '[/?]'
+        let motion .= input(motion) . "\<CR>"
+    endif
+
+    let @y = @"
+    return '"Yy' . motion . ':let @" = @y' . "\<CR>"
+endfunction
+
+
+"======[ Add a $$ command in Visual mode ]==============================
+
+vmap <silent>       ]   $"yygv_$
+vmap <silent><expr> _$  Under_dollar_visual()
+
+function! Under_dollar_visual ()
+    " Locate block being shifted...
+    let maxcol = max(map(split(@y, "\n"), 'strlen(v:val)')) + getpos("'<")[2] - 2
+
+    " Return the selction that does the job...
+    return maxcol . '|'
+endfunction
+
+"=====[ Diff against disk ]==========================================
+
+map <silent> zd :silent call DC_DiffChanges()<CR>
+
+" Change the fold marker to something more useful
+function! DC_LineNumberOnly ()
+    if v:foldstart == 1 && v:foldend == line('$')
+        return '.. ' . v:foldend . '  (No difference)'
+    else
+        return '.. ' . v:foldend
+    endif
+endfunction
+
+" Track each buffer's initial state
+augroup DC_TrackInitial
+    autocmd!
+    autocmd BufReadPost,BufNewFile  *   if !exists('b:DC_initial_state')
+    autocmd BufReadPost,BufNewFile  *       let b:DC_initial_state = getline(1,'$')
+    autocmd BufReadPost,BufNewFile  *   endif
+augroup END
+
+highlight DC_DEEMPHASIZED ctermfg=grey
+
+function! DC_DiffChanges ()
+    diffthis
+    highlight Normal ctermfg=grey
+    let initial_state = b:DC_initial_state
+    set diffopt=context:2,filler,foldcolumn:0
+    set fillchars=fold: 
+    set foldcolumn=0
+    setlocal foldtext=DC_LineNumberOnly()
+    set number
+
+"    aboveleft vnew
+    belowright vnew
+    normal 0
+    silent call setline(1, initial_state)
+    diffthis
+    set diffopt=context:2,filler,foldcolumn:0
+    set fillchars=fold: 
+    set foldcolumn=0
+    setlocal foldtext=DC_LineNumberOnly()
+    set number
+
+    nmap <silent><buffer> zd :diffoff<CR>:q!<CR>:set diffopt& fillchars& number& foldcolumn=0<CR>:set nodiff<CR>:highlight Normal ctermfg=NONE<CR>
+endfunction
+
+
+"=====[ ,, as => without delays ]===================
+
+inoremap <expr><silent>  ,  Smartcomma()
+
+function! Smartcomma ()
+    let [bufnum, lnum, col, off, curswant] = getcurpos()
+    if getline('.') =~ (',\%' . (col+off) . 'c')
+        return "\<C-H>=>"
+    else
+        return ','
+    endif
+endfunction
+
+
+"=====[ Interface with ag ]======================
+
+set grepprg=ag\ --vimgrep\ $*
+set grepformat=%f:%l:%c:%m
+
+
+"=====[ Decute startify ]================
+
+let g:startify_custom_header = []
+
+
+"=====[ Configure change-tracking ]========
+
+let g:changes_hl_lines=1
+let g:changes_verbose=0
+let g:changes_autocmd=1
+
+
+"=====[ Make netrw more instantly useful ]============
+
+let g:netrw_sort_by='time'
+let g:netrw_sort_direction='reverse'
+
+
+"=====[ Config ditto ]=============
+
+highlight Ditto ctermfg=red
+
+let g:ditto_hlgroups = ['Ditto1']
+let g:ditto_autocmd = "InsertLeave"
+
+
+let g:ditto_min_word_length = 6
+let g:ditto_min_repetitions = 2
