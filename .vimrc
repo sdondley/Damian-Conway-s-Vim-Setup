@@ -1,4 +1,4 @@
-:mapclear | mapclear <buffer> | mapclear! | mapclear! <buffer>
+":mapclear | mapclear <buffer> | mapclear! | mapclear! <buffer>
 nnoremap ;c 12G<C-v>GI"<ESC>1G
 nnoremap ;u 12G<C-v>Gx1G
 runtime plugin/git-basic.vim
@@ -1262,91 +1262,93 @@ nmap <silent> # :call ToggleComment()<CR>j0
 vmap <silent> # :call ToggleBlock()<CR>
 
 
-""=====[ Highlight cursor ]===================
-"
-"" Inverse highlighting for cursor...
-"highlight CursorInverse   term=inverse ctermfg=black ctermbg=white
-"
-"" Set up highlighter at high priority (i.e. 99)
-"call matchadd('CursorInverse', '\%#', 99)
-"
-"" Need an invisible cursor column to make it update on every cursor move...
-"" (via the visualguide.vim plugin, so as to play nice)
-"runtime plugin/visualsmartia.vim
-"call VG_Show_CursorColumn('off')
-"
-"
-""=====[ Highlight row and column on request ]===================
-"
-"" Toggle cursor row highlighting on request...
-"highlight CursorLine   term=bold ctermfg=black ctermbg=cyan  cterm=bold
-"Nmap <silent> ;R [Toggle cursor line highlighting] :set cursorline!<CR>
-"
-"" Toggle cursor column highlighting on request...
-"" (via visualguide.vim plugin, so as to play nice)
-"nmap <silent> \  :silent call VG_Show_CursorColumn('flip')<CR>
-"vmap <silent> \  :<C-W>silent call VG_Show_CursorColumn('flip')<CR>gv
-"imap <silent> <C-\>  <C-O>:silent call VG_Show_CursorColumn('flip')<CR>
-"
-"
-""=====[ Highlight spelling errors on request ]===================
-"
-"set spelllang=en_au
-"Nmap <silent> ;s  [Toggle spell-checking]               :set invspell spelllang=en<CR>
-"Nmap <silent> ;ss [Toggle Basic English spell-checking] :set    spell spelllang=en-basic<CR>
-"
-"
-""======[ Create a toggle for the XML completion plugin ]=======
-"
-"Nmap ;x [Toggle XML completion] <Plug>XMLMatchToggle
-"
-"
-""======[ Order-preserving uniqueness ]=========================
-"
-"" Normalize the whitespace in a string...
-"function! TrimWS (str)
-"    " Remove whitespace fore and aft...
-"    let trimmed = substitute(a:str, '^\s\+\|\s\+$', '', 'g')
-"
-"    " Then condense internal whitespaces...
-"    return substitute(trimmed, '\s\+', ' ', 'g')
-"endfunction
-"
-"" Reduce a range of lines to only the unique ones, preserving order...
-"function! Uniq (...) range
-"    " Ignore whitespace differences, if asked to...
-"    let ignore_ws_diffs = len(a:000)
-"
-"    " Nothing unique seen yet...
-"    let seen = {}
-"    let uniq_lines = []
-"
-"    " Walk through the lines, remembering only the hitherto unseen ones...
-"    for line in getline(a:firstline, a:lastline)
-"        let normalized_line = '>' . (ignore_ws_diffs ? TrimWS(line) : line)
-"        if !get(seen,normalized_line)
-"            call add(uniq_lines, line)
-"            let seen[normalized_line] = 1
-"        endif
-"    endfor
-"
-"    " Replace the range of original lines with just the unique lines...
-"    exec a:firstline . ',' . a:lastline . 'delete'
-"    call append(a:firstline-1, uniq_lines)
-"endfunction
-"
-"" Only in visual mode...
-"vmap  q :call Uniq()<CR>
-"vmap  Q :call Uniq('ignore whitespace')<CR>
-"
-"
-""====[ Make normalized search use NFKC ]=======
-"
-"runtime plugin/normalized_search.vim
-"NormalizedSearchUsing ~/bin/NFKC
-"
-"
-"
+"=====[ Highlight cursor ]===================
+
+" Inverse highlighting for cursor...
+highlight CursorInverse   term=inverse ctermfg=black ctermbg=white
+
+" Set up highlighter at high priority (i.e. 99)
+call matchadd('CursorInverse', '\%#', 99)
+
+" Need an invisible cursor column to make it update on every cursor move...
+" (via the visualguide.vim plugin, so as to play nice)
+runtime plugin/visualsmartia.vim
+call VG_Show_CursorColumn('off')
+
+
+"=====[ Highlight row and column on request ]===================
+
+" Toggle cursor row highlighting on request...
+highlight CursorLine   term=bold ctermfg=black ctermbg=cyan  cterm=bold
+Nmap <silent> ;R [Toggle cursor line highlighting] :set cursorline!<CR>
+
+" Toggle cursor column highlighting on request...
+" (via visualguide.vim plugin, so as to play nice)
+nmap <silent> \  :silent call VG_Show_CursorColumn('flip')<CR>
+vmap <silent> \  :<C-W>silent call VG_Show_CursorColumn('flip')<CR>gv
+imap <silent> <C-\>  <C-O>:silent call VG_Show_CursorColumn('flip')<CR>
+
+
+"=====[ Highlight spelling errors on request ]===================
+
+set spelllang=en_au
+Nmap <silent> ;s  [Toggle spell-checking]               :set invspell spelllang=en<CR>
+Nmap <silent> ;ss [Toggle Basic English spell-checking] :set    spell spelllang=en-basic<CR>
+
+
+"======[ Create a toggle for the XML completion plugin ]=======
+
+Nmap ;x [Toggle XML completion] <Plug>XMLMatchToggle
+
+
+"======[ Order-preserving uniqueness ]=========================
+
+" Normalize the whitespace in a string...
+function! TrimWS (str)
+    " Remove whitespace fore and aft...
+    let trimmed = substitute(a:str, '^\s\+\|\s\+$', '', 'g')
+
+    " Then condense internal whitespaces...
+    return substitute(trimmed, '\s\+', ' ', 'g')
+endfunction
+
+" Reduce a range of lines to only the unique ones, preserving order...
+function! Uniq (...) range
+    " Ignore whitespace differences, if asked to...
+    let ignore_ws_diffs = len(a:000)
+
+    " Nothing unique seen yet...
+    let seen = {}
+    let uniq_lines = []
+
+    " Walk through the lines, remembering only the hitherto unseen ones...
+    for line in getline(a:firstline, a:lastline)
+        let normalized_line = '>' . (ignore_ws_diffs ? TrimWS(line) : line)
+        if !get(seen,normalized_line)
+            call add(uniq_lines, line)
+            let seen[normalized_line] = 1
+        endif
+    endfor
+
+    " Replace the range of original lines with just the unique lines...
+    exec a:firstline . ',' . a:lastline . 'delete'
+    call append(a:firstline-1, uniq_lines)
+endfunction
+
+" Only in visual mode...
+vmap  q :call Uniq()<CR>
+vmap  Q :call Uniq('ignore whitespace')<CR>
+
+
+" SD no idea what this does
+" Requires normalized_search.vim plugin
+"====[ Make normalized search use NFKC ]=======
+
+runtime plugin/normalized_search.vim
+NormalizedSearchUsing ~/bin/NFKC
+
+
+" SD looks like this is for editing VIM help files. Leaving commented out
 ""====[ Regenerate help tags when directly editing a help file ]=================
 "
 "augroup HelpTags
@@ -1407,69 +1409,69 @@ vmap <silent> # :call ToggleBlock()<CR>
 "        call setline(from + field_num, substitute(updated_line,'\s*$','',''))
 "    endfor
 "endfunction
-"
-"
-""=====[ Search folding ]=====================
-"
-"" Don't start new buffers folded
-"set foldlevelstart=99
-"
-"" Highlight folds
-"highlight Folded  ctermfg=cyan ctermbg=black
-"
-"" Toggle on and off...
-"nmap <silent> <expr>  zz  FS_ToggleFoldAroundSearch({'context':1})
-"
-"" Show only sub defns (and maybe comments)...
-"let perl_sub_pat = '^\s*\%(sub\|func\|method\|package\)\s\+\k\+'
-"let vim_sub_pat  = '^\s*fu\%[nction!]\s\+\k\+'
-"augroup FoldSub
-"    autocmd!
-"    autocmd BufEnter * nmap <silent> <expr>  zp  FS_FoldAroundTarget(perl_sub_pat,{'context':1})
-"    autocmd BufEnter * nmap <silent> <expr>  za  FS_FoldAroundTarget(perl_sub_pat.'\zs\\|^\s*#.*',{'context':0, 'folds':'invisible'})
-"    autocmd BufEnter *.vim,.vimrc nmap <silent> <expr>  zp  FS_FoldAroundTarget(vim_sub_pat,{'context':1})
-"    autocmd BufEnter *.vim,.vimrc nmap <silent> <expr>  za  FS_FoldAroundTarget(vim_sub_pat.'\\|^\s*".*',{'context':0, 'folds':'invisible'})
-"    autocmd BufEnter * nmap <silent> <expr>             zv  FS_FoldAroundTarget(vim_sub_pat.'\\|^\s*".*',{'context':0, 'folds':'invisible'})
-"augroup END
-"
-"" Show only C #includes...
-"nmap <silent> <expr>  zu  FS_FoldAroundTarget('^\s*use\s\+\S.*;',{'context':1})
-"
-"
-""====[ Do a command, then restore the cursor ]======
-"
-"command! -nargs=+ -complete=command Static  call Static_impl(<q-args>)
-"
-"function! Static_impl (cmd)
-"    exec a:cmd
-"    normal ``
-"endfunction
-"
-"
-""====[ Show when lines extend past column 80 ]=================================>-<=====================
-"
-"highlight ColorColumn ctermfg=208 ctermbg=Black
-"
-"function! MarkMargin (on)
-"    if exists('b:MarkMargin')
-"        try
-"            call matchdelete(b:MarkMargin)
-"        catch /./
-"        endtry
-"        unlet b:MarkMargin
-"    endif
-"    if a:on
-"        let b:MarkMargin = matchadd('ColorColumn', '\%81v\s*\S', 100)
-"    endif
-"endfunction
-"
-"augroup MarkMargin
-"    autocmd!
-"    autocmd  BufEnter  *       :call MarkMargin(1)
-"    autocmd  BufEnter  *.vp*   :call MarkMargin(0)
-"augroup END
-"
-"
+
+
+"=====[ Search folding ]=====================
+
+" Don't start new buffers folded
+set foldlevelstart=99
+
+" Highlight folds
+highlight Folded  ctermfg=cyan ctermbg=black
+
+" Toggle on and off...
+nmap <silent> <expr>  zz  FS_ToggleFoldAroundSearch({'context':1})
+
+" Show only sub defns (and maybe comments)...
+let perl_sub_pat = '^\s*\%(sub\|func\|method\|package\)\s\+\k\+'
+let vim_sub_pat  = '^\s*fu\%[nction!]\s\+\k\+'
+augroup FoldSub
+    autocmd!
+    autocmd BufEnter * nmap <silent> <expr>  zp  FS_FoldAroundTarget(perl_sub_pat,{'context':1})
+    autocmd BufEnter * nmap <silent> <expr>  za  FS_FoldAroundTarget(perl_sub_pat.'\zs\\|^\s*#.*',{'context':0, 'folds':'invisible'})
+    autocmd BufEnter *.vim,.vimrc nmap <silent> <expr>  zp  FS_FoldAroundTarget(vim_sub_pat,{'context':1})
+    autocmd BufEnter *.vim,.vimrc nmap <silent> <expr>  za  FS_FoldAroundTarget(vim_sub_pat.'\\|^\s*".*',{'context':0, 'folds':'invisible'})
+    autocmd BufEnter * nmap <silent> <expr>             zv  FS_FoldAroundTarget(vim_sub_pat.'\\|^\s*".*',{'context':0, 'folds':'invisible'})
+augroup END
+
+" Show only C #includes...
+nmap <silent> <expr>  zu  FS_FoldAroundTarget('^\s*use\s\+\S.*;',{'context':1})
+
+
+"====[ Do a command, then restore the cursor ]======
+
+command! -nargs=+ -complete=command Static  call Static_impl(<q-args>)
+
+function! Static_impl (cmd)
+    exec a:cmd
+    normal ``
+endfunction
+
+
+"====[ Show when lines extend past column 80 ]=================================>-<=====================
+
+highlight ColorColumn ctermfg=208 ctermbg=Black
+
+function! MarkMargin (on)
+    if exists('b:MarkMargin')
+        try
+            call matchdelete(b:MarkMargin)
+        catch /./
+        endtry
+        unlet b:MarkMargin
+    endif
+    if a:on
+        let b:MarkMargin = matchadd('ColorColumn', '\%81v\s*\S', 100)
+    endif
+endfunction
+
+augroup MarkMargin
+    autocmd!
+    autocmd  BufEnter  *       :call MarkMargin(1)
+    autocmd  BufEnter  *.vp*   :call MarkMargin(0)
+augroup END
+
+
 ""====[ Accelerated up and down on wrapped lines ]============
 "
 ""nnoremap  j  gj
