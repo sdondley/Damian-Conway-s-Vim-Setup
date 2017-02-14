@@ -562,30 +562,30 @@ nmap <silent> f  !Gformat -T4<CR>
 nmap          ff r<CR>fgej
 vmap          F :!format -T4 -all -
 vmap <silent> f :!format -T4 -all<CR>
-"
-"" Install current file and swap to alternate file...
-"Nmap IP [Install current file and swap to alternate] :!install -f %<CR>
-"
-"
-"" Add *** as **/* on command-line...
-"cmap *** **/*
-"
-"
-"" Take off and nuke the entire buffer contents from space
-"" (It's the only way to be sure)...
-"nmap XX 1GdG
-"
-"" Replace the current buffer with a copy of the most recent file...
-"
-"nmap RR XX:0r#<CR><C-G>
-"
-"" Insert cut marks...
-"nmap -- A<CR><CR><CR><ESC>k6i-----cut-----<ESC><CR>
-"
-"
-"" Indent/outdent current block...
-"nmap %% $>i}``
-"nmap $$ $<i}``
+
+" Install current file and swap to alternate file...
+Nmap IP [Install current file and swap to alternate] :!install -f %<CR>
+
+
+" Add *** as **/* on command-line...
+cmap *** **/*
+
+
+" Take off and nuke the entire buffer contents from space
+" (It's the only way to be sure)...
+nmap XX 1GdG
+
+" Replace the current buffer with a copy of the most recent file...
+
+nmap RR XX:0r#<CR><C-G>
+
+" Insert cut marks...
+nmap -- A<CR><CR><CR><ESC>k6i-----cut-----<ESC><CR>
+
+
+" Indent/outdent current block...
+nmap %% $>i}``
+nmap $$ $<i}``
 "
 "
 "" =====[ Perl programming support ]===========================
