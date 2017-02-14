@@ -557,7 +557,7 @@ function! File_advance (dir)
 endfunction
 
 " Format file with autoformat (capitalize to specify options)...
-" SD cannot tell what this is uspposed to do
+" SD cannot tell what this is uspposed to do. Leaving commented out.
 "nmap          F  !Gformat -T4 -
 "nmap <silent> f  !Gformat -T4<CR>
 "nmap          ff r<CR>fgej
@@ -587,227 +587,228 @@ nmap -- A<CR><CR><CR><ESC>k6i-----cut-----<ESC><CR>
 " Indent/outdent current block...
 nmap %% $>i}``
 nmap $$ $<i}``
+
+
+" =====[ Perl programming support ]===========================
+
+" Execute Perl file...
+nmap <silent> W  :!clear;echo;echo;(script -q ~/tmp/script_$$ polyperl %; if (-s ~/tmp/script_$$) then; alert; echo; echo; echo; getraw; endif; rm -f ~/tmp/script_$$ )<CR><CR>
+
+" Execute Perl file (output to pager)...
+nmap E :!polyperl -m %<CR>
+
+" Execute Perl file (in debugger)...
+nmap Q :!polyperl -d %<CR>
+
+" Execute Perl file (in regex debugger)...
+nmap ;r :!rxrx %<CR>
+
+" Format file with perltidy...
+Nmap ;p [Perltidy the current buffer]  1G!Gperltidy<CR>
+
+" Show what changes perltidy would make...
+Nmap ;pp [Perltidy to the current buffer (as a diff)]  :call Perltidy_diff()<CR>
+
+function! Perltidy_diff ()
+    " Work out what the tidied file will be called...
+    let perl_file = expand( '%' )
+    let tidy_file = perl_file . '.tdy'
+
+    call system( 'perltidy -nst ' . perl_file . ' -o ' . tidy_file )
+
+    " Add the diff to the right of the current window...
+   set splitright
+    exe ":vertical diffsplit " . tidy_file
+
+    " Clean up the tidied version...
+    call delete(tidy_file)
+endfunction
+
+" Run perldoc with smarter completion...
+Nmap <expr> ?? [Go to documentation] CallPerldoc()
+set keywordprg=pd
+
+function! CallPerldoc ()
+    " When editing Vim files, revert to :help...
+    if &filetype == 'vim' || &buftype == 'help'
+        return ":help "
+
+    " Otherwise use Perldoc...
+    else
+        let target = matchstr(expand('<cfile>'), '\w\+\(::\w\+\)*')
+        set wildmode=list:full
+        return ":Perldoc "
+    endif
+endfunction
+
+"Complete perldoc requests with names of installed Perl modules
+command! -nargs=? -complete=customlist,CompletePerlModuleNames Perldoc  call Perldoc_impl(<q-args>)
 "
-"
-"" =====[ Perl programming support ]===========================
-"
-"" Execute Perl file...
-"nmap <silent> W  :!clear;echo;echo;(script -q ~/tmp/script_$$ polyperl %; if (-s ~/tmp/script_$$) then; alert; echo; echo; echo; getraw; endif; rm -f ~/tmp/script_$$ )<CR><CR>
-"
-"" Execute Perl file (output to pager)...
-"nmap E :!polyperl -m %<CR>
-"
-"" Execute Perl file (in debugger)...
-"nmap Q :!polyperl -d %<CR>
-"
-"" Execute Perl file (in regex debugger)...
-"nmap ;r :!rxrx %<CR>
-"
-"" Format file with perltidy...
-"Nmap ;p [Perltidy the current buffer]  1G!Gperltidy<CR>
-"
-"" Show what changes perltidy would make...
-"Nmap ;pp [Perltidy to the current buffer (as a diff)]  :call Perltidy_diff()<CR>
-"
-"function! Perltidy_diff ()
-"    " Work out what the tidied file will be called...
-"    let perl_file = expand( '%' )
-"    let tidy_file = perl_file . '.tdy'
-"
-"    call system( 'perltidy -nst ' . perl_file . ' -o ' . tidy_file )
-"
-"    " Add the diff to the right of the current window...
-"    set splitright
-"    exe ":vertical diffsplit " . tidy_file
-"
-"    " Clean up the tidied version...
-"    call delete(tidy_file)
-"endfunction
-"
-"" Run perldoc with smarter completion...
-"Nmap <expr> ?? [Go to documentation] CallPerldoc()
-"set keywordprg=pd
-"
-"function! CallPerldoc ()
-"    " When editing Vim files, revert to :help...
-"    if &filetype == 'vim' || &buftype == 'help'
-"        return ":help "
-"
-"    " Otherwise use Perldoc...
-"    else
-"        let target = matchstr(expand('<cfile>'), '\w\+\(::\w\+\)*')
-"        set wildmode=list:full
-"        return ":Perldoc "
-"    endif
-"endfunction
-"
-""Complete perldoc requests with names of installed Perl modules
-"command! -nargs=? -complete=customlist,CompletePerlModuleNames Perldoc  call Perldoc_impl(<q-args>)
-"
-""Undo the special wildmoding and then execute the requested perdoc lookup...
-"function! Perldoc_impl (args)
-"    set wildmode=list:longest,full
-"    if empty(a:args)
-"        exec '!pd %'
-"    else
-"        exec '!pd ' . a:args
-"    endif
-"endfunction
-"
-"" Compile the list of installed Perl modules (and include the name under the cursor)...
-"let s:module_files = readfile($HOME.'/.vim/perlmodules')
-"function! CompletePerlModuleNames(prefix, cmdline, curpos)
-"    let cfile = expand('<cfile>')
-"    let prefix = a:prefix
-"    if prefix == cfile
-"        let prefix = ""
-"    endif
-"    if empty(prefix) && cfile =~ '^\w\+\(::\w\+\)*$'
-"        return [cfile] + filter(copy(s:module_files), 'v:val =~ ''\c\_^' . prefix. "'")
-"    else
-"        return filter(copy(s:module_files), 'v:val =~ ''\c\_^' . prefix. "'")
-"    endif
-"endfunction
-"
-"
-"" Handle Perl include files better...
+"Undo the special wildmoding and then execute the requested perdoc lookup...
+function! Perldoc_impl (args)
+    set wildmode=list:longest,full
+    if empty(a:args)
+        exec '!pd %'
+    else
+        exec '!pd ' . a:args
+    endif
+endfunction
+
+" Compile the list of installed Perl modules (and include the name under the cursor)...
+let s:module_files = readfile($HOME.'/.vim/perlmodules')
+function! CompletePerlModuleNames(prefix, cmdline, curpos)
+    let cfile = expand('<cfile>')
+    let prefix = a:prefix
+    if prefix == cfile
+        let prefix = ""
+    endif
+    if empty(prefix) && cfile =~ '^\w\+\(::\w\+\)*$'
+        return [cfile] + filter(copy(s:module_files), 'v:val =~ ''\c\_^' . prefix. "'")
+    else
+        return filter(copy(s:module_files), 'v:val =~ ''\c\_^' . prefix. "'")
+    endif
+endfunction
+
+
+" SD Conway had the following block commented out
+" Handle Perl include files better...
 ""set include=^\\s*use\\s\\+\\zs\\k\\+\\ze
 ""set includeexpr=substitute(v:fname,'::','/','g')
 ""set suffixesadd=.pm
 ""execute 'set path+=' . substitute($PERL5LIB, ':', ',', 'g')
-"
-"
-""Adjust keyword characters to match Perlish identifiers...
-"set iskeyword+=$
-"set iskeyword+=%
-"set iskeyword+=@-@
-"set iskeyword+=:
-"set iskeyword-=,
-"
-"
-"" Insert common Perl code structures...
-"
-"iab udd use Data::Dump 'ddx';<CR>ddx;<LEFT>
-"iab udv use Dumpvalue;<CR>Dumpvalue->new->dumpValues();<ESC>hi
-"iab uds use Data::Show;<CR>show
-"iab ubm use Benchmark qw( cmpthese );<CR><CR>cmpthese -10, {<CR>};<ESC>O
-"iab usc use Smart::Comments;<CR>###
-"iab uts use Test::Simple 'no_plan';
-"iab utm use Test::More 'no_plan';
-"iab dbs $DB::single = 1;<ESC>
-"
-"
-""=====[ Emphasize typical mistakes in Vim and Perl files ]=========
-"
-"" Add a new high-visibility highlight combination...
-"highlight WHITE_ON_RED    ctermfg=white  ctermbg=red
-"
-"" Emphasize undereferenced references...
-"call matchadd('WHITE_ON_RED', '_ref[ ]*[[{(]\|_ref[ ]*-[^>]')
-"
-"" Emphasize typical mistakes a Perl hacker makes in .vim files...
-"let g:VimMistakes
-"\   =     '\_^\s*\zs\%(my\s\+\)\?\%(\k:\)\?\k\+\%(\[.\{-}\]\)\?\s*[+-.]\?=[=>~]\@!'
-"\   . '\|'
-"\   .     '\_^\s*\zselsif'
-"\   . '\|'
-"\   .     ';\s*\_$'
-"\   . '\|'
-"\   .     '\_^\s*\zs#.*'
-"\   . '\|'
-"\   .     '\_^\s*\zs\k\+('
-"
-"let g:VimMistakesID = 668
-"augroup VimMistakes
-"    autocmd!
-"    autocmd BufEnter  *.vim,*.vimrc   call VimMistakes_AddMatch()
-"    autocmd BufLeave  *.vim,*.vimrc   call VimMistakes_ClearMatch()
-"augroup END
-"
-"function! VimMistakes_AddMatch ()
-"    try | call matchadd('WHITE_ON_RED',g:VimMistakes,10,g:VimMistakesID) | catch | endtry
-"endfunction
-"
-"function! VimMistakes_ClearMatch ()
-"    try | call matchdelete(g:VimMistakesID) | catch | endtry
-"endfunction
-"
-"
-""=====[ Enable quickfix on Perl programs ]=======================
-"
-"Nmap ;m [Run :make and any tests on a Perl file]  :make<CR><CR><CR>:call PerlMake_Cleanup()<CR>
-"
-"function! PerlMake_Cleanup ()
-"    " If there are errors, show the first of them...
-"    if !empty(getqflist())
-"        cc
-"
-"    " Otherwise, run the test suite as well...
-"    else
-"        call RunPerlTests()
-"    endif
-"endfunction
-"
-"set makeprg=polyperl\ -vc\ %\ $*
-"
-"augroup PerlMake
-"    autocmd!
-"    autocmd BufReadPost quickfix  setlocal number
-"                             \ |  setlocal nowrap
-"                             \ |  setlocal modifiable
-"                             \ |  silent! %s/^[^|]*\//.../
-"                             \ |  setlocal nomodifiable
-"augroup END
-"
-"
-"" Make it easy to navigate errors (and vimgreps)...
-"
-"nmap <silent> <RIGHT>         :cnext<CR>
-"nmap <silent> <RIGHT><RIGHT>  :cnf<CR><C-G>
-"nmap <silent> <LEFT>          :cprev<CR>
-"nmap <silent> <LEFT><LEFT>    :cpf<CR><C-G>
-"
-"
-""=====[ Run a Perl module's test suite ]=========================
-"
-"let g:PerlTests_program       = 'perltests'   " ...What to call
-"let g:PerlTests_search_height = 5             " ...How far up to search
-"let g:PerlTests_test_dir      = '/t'          " ...Where to look for tests
-"
-"augroup Perl_Tests
-"    autocmd!
-"    autocmd BufEnter *.p[lm]  Nmap <buffer> ;t [Run local test suite] :call RunPerlTests()<CR>
-"    autocmd BufEnter *.t      Nmap <buffer> ;t [Run local test suite] :call RunPerlTests()<CR>
-"augroup END
-"
-"function! RunPerlTests ()
-"    " Start in the current directory...
-"    let dir = expand('%:h')
-"
-"    " Walk up through parent directories, looking for a test directory...
-"    for n in range(g:PerlTests_search_height)
-"        " When found...
-"        if isdirectory(dir . g:PerlTests_test_dir)
-"            " Go there...
-"            silent exec 'cd ' . dir
-"
-"            " Run the tests...
-"            exec ':!' . g:PerlTests_program
-"
-"            " Return to the previous directory...
-"            silent cd -
-"            return
-"        endif
-"
-"        " Otherwise, keep looking up the directory tree...
-"        let dir = dir . '/..'
-"    endfor
-"
-"    " If not found, report the failure...
-"    echohl WarningMsg
-"    echomsg "Couldn't find a suitable" g:PerlTests_test_dir '(tried' g:PerlTests_search_height 'levels up)'
-"    echohl None
-"endfunction
+
+
+"Adjust keyword characters to match Perlish identifiers...
+set iskeyword+=$
+set iskeyword+=%
+set iskeyword+=@-@
+set iskeyword+=:
+set iskeyword-=,
+
+
+" Insert common Perl code structures...
+
+iab udd use Data::Dump 'ddx';<CR>ddx;<LEFT>
+iab udv use Dumpvalue;<CR>Dumpvalue->new->dumpValues();<ESC>hi
+iab uds use Data::Show;<CR>show
+iab ubm use Benchmark qw( cmpthese );<CR><CR>cmpthese -10, {<CR>};<ESC>O
+iab usc use Smart::Comments;<CR>###
+iab uts use Test::Simple 'no_plan';
+iab utm use Test::More 'no_plan';
+iab dbs $DB::single = 1;<ESC>
+
+
+"=====[ Emphasize typical mistakes in Vim and Perl files ]=========
+
+" Add a new high-visibility highlight combination...
+highlight WHITE_ON_RED    ctermfg=white  ctermbg=red
+
+" Emphasize undereferenced references...
+call matchadd('WHITE_ON_RED', '_ref[ ]*[[{(]\|_ref[ ]*-[^>]')
+
+" Emphasize typical mistakes a Perl hacker makes in .vim files...
+let g:VimMistakes
+\   =     '\_^\s*\zs\%(my\s\+\)\?\%(\k:\)\?\k\+\%(\[.\{-}\]\)\?\s*[+-.]\?=[=>~]\@!'
+\   . '\|'
+\   .     '\_^\s*\zselsif'
+\   . '\|'
+\   .     ';\s*\_$'
+\   . '\|'
+\   .     '\_^\s*\zs#.*'
+\   . '\|'
+\   .     '\_^\s*\zs\k\+('
+
+let g:VimMistakesID = 668
+augroup VimMistakes
+    autocmd!
+    autocmd BufEnter  *.vim,*.vimrc   call VimMistakes_AddMatch()
+    autocmd BufLeave  *.vim,*.vimrc   call VimMistakes_ClearMatch()
+augroup END
+
+function! VimMistakes_AddMatch ()
+    try | call matchadd('WHITE_ON_RED',g:VimMistakes,10,g:VimMistakesID) | catch | endtry
+endfunction
+
+function! VimMistakes_ClearMatch ()
+    try | call matchdelete(g:VimMistakesID) | catch | endtry
+endfunction
+
+
+"=====[ Enable quickfix on Perl programs ]=======================
+
+Nmap ;m [Run :make and any tests on a Perl file]  :make<CR><CR><CR>:call PerlMake_Cleanup()<CR>
+
+function! PerlMake_Cleanup ()
+    " If there are errors, show the first of them...
+    if !empty(getqflist())
+        cc
+
+    " Otherwise, run the test suite as well...
+    else
+        call RunPerlTests()
+    endif
+endfunction
+
+set makeprg=polyperl\ -vc\ %\ $*
+
+augroup PerlMake
+    autocmd!
+    autocmd BufReadPost quickfix  setlocal number
+                             \ |  setlocal nowrap
+                             \ |  setlocal modifiable
+                             \ |  silent! %s/^[^|]*\//.../
+                             \ |  setlocal nomodifiable
+augroup END
+
+
+" Make it easy to navigate errors (and vimgreps)...
+
+nmap <silent> <RIGHT>         :cnext<CR>
+nmap <silent> <RIGHT><RIGHT>  :cnf<CR><C-G>
+nmap <silent> <LEFT>          :cprev<CR>
+nmap <silent> <LEFT><LEFT>    :cpf<CR><C-G>
+
+
+"=====[ Run a Perl module's test suite ]=========================
+
+let g:PerlTests_program       = 'perltests'   " ...What to call
+let g:PerlTests_search_height = 5             " ...How far up to search
+let g:PerlTests_test_dir      = '/t'          " ...Where to look for tests
+
+augroup Perl_Tests
+    autocmd!
+    autocmd BufEnter *.p[lm]  Nmap <buffer> ;t [Run local test suite] :call RunPerlTests()<CR>
+    autocmd BufEnter *.t      Nmap <buffer> ;t [Run local test suite] :call RunPerlTests()<CR>
+augroup END
+
+function! RunPerlTests ()
+    " Start in the current directory...
+    let dir = expand('%:h')
+
+    " Walk up through parent directories, looking for a test directory...
+    for n in range(g:PerlTests_search_height)
+        " When found...
+        if isdirectory(dir . g:PerlTests_test_dir)
+            " Go there...
+            silent exec 'cd ' . dir
+
+            " Run the tests...
+            exec ':!' . g:PerlTests_program
+
+            " Return to the previous directory...
+            silent cd -
+            return
+        endif
+
+        " Otherwise, keep looking up the directory tree...
+        let dir = dir . '/..'
+    endfor
+
+    " If not found, report the failure...
+    echohl WarningMsg
+    echomsg "Couldn't find a suitable" g:PerlTests_test_dir '(tried' g:PerlTests_search_height 'levels up)'
+    echohl None
+endfunction
 "
 "
 ""=====[ Auto-setup for new files ]===========
