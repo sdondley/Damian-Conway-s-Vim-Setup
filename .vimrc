@@ -534,15 +534,15 @@ set scrolloff=20                     "Scroll when 2 lines from top/bottom
 Nmap BB [Back up current file]  :!bak -q %<CR><CR>:echomsg "Backed up" expand('%')<CR>
 
 
-""=====[ Remap various keys to something more useful ]========================
-"
-"" Use space to jump down a page (like browsers do)...
-"nnoremap   <Space> <PageDown>
-"vnoremap   <Space> <PageDown>
-"
-"" Forward/back one file...
-"nmap <silent><expr> <DOWN> File_advance('next')
-"nmap <silent><expr> <UP>   File_advance('prev')
+"=====[ Remap various keys to something more useful ]========================
+
+" Use space to jump down a page (like browsers do)...
+nnoremap   <Space> <PageDown>
+vnoremap   <Space> <PageDown>
+
+" Forward/back one file...
+nmap <silent><expr> <DOWN> File_advance('next')
+nmap <silent><expr> <UP>   File_advance('prev')
 "
 "function! File_advance (dir)
 "    if a:dir == 'next'
