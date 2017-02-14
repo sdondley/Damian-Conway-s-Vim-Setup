@@ -1,14 +1,7 @@
 ":mapclear | mapclear <buffer> | mapclear! | mapclear! <buffer>
-nnoremap ;c 12G<C-v>GI"<ESC>1G
-nnoremap ;u 12G<C-v>Gx1G
-runtime plugin/git-basic.vim
-"====[ Edit and auto-update this config file and plugins ]==========
-
-" SD nifty. now I can do away with a command in my git-basic.vim file
-augroup VimReload
-autocmd!
-    autocmd BufWritePost *tup/.vimrc\|/home/steve/\.vimrc source %
-augroup END
+"nnoremap ;c 12G<C-v>GI"<ESC>1G
+"nnoremap ;u 12G<C-v>Gx1G
+"runtime plugin/git-basic.vim
 
 
 ""=====[ Convert to Unicode defaults ]===============================
@@ -44,6 +37,13 @@ highlight Comment term=bold ctermfg=white
 runtime plugin/documap.vim
 
 
+"====[ Edit and auto-update this config file and plugins ]==========
+
+" SD nifty. now I can do away with a command in my git-basic.vim file
+augroup VimReload
+autocmd!
+    autocmd BufWritePost *tup/.vimrc\|/home/steve/\.vimrc source %
+augroup END
 
 nmap g :source
 
@@ -1497,9 +1497,9 @@ nmap <silent>       ++  vip++
 
 
 "====[ Configure eqalignsimple ]=================================
-"
-"EQAS_align('\S:',         '',   '\s')
-"EQAS_align('[[:punct:]]', '',   '\s')
+
+"EQAS_Align('\S:',         '',   '\s')
+"EQAS_Align('[[:punct:]]', '',   '\s')
 
 
 
