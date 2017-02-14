@@ -543,19 +543,19 @@ vnoremap   <Space> <PageDown>
 " Forward/back one file...
 nmap <silent><expr> <DOWN> File_advance('next')
 nmap <silent><expr> <UP>   File_advance('prev')
-"
-"function! File_advance (dir)
-"    if a:dir == 'next'
-"        return argidx() < argc() - 1 ? ":next\<CR>0"
-"        \                            : ":echohl Comment|:echo 'At last file'|echohl NONE\<CR>"
-"    elseif a:dir == 'prev'
-"        return argidx() > 0          ? ":prev\<CR>0"
-"        \                            : ":echohl Comment|:echo 'At first file'|echohl NONE\<CR>"
-"    else
-"        echoerr "Unknown direction for file advance: " . a:dir
-"    endif
-"endfunction
-"
+
+function! File_advance (dir)
+    if a:dir == 'next'
+        return argidx() < argc() - 1 ? ":next\<CR>0"
+        \                            : ":echohl Comment|:echo 'At last file'|echohl NONE\<CR>"
+    elseif a:dir == 'prev'
+        return argidx() > 0          ? ":prev\<CR>0"
+        \                            : ":echohl Comment|:echo 'At first file'|echohl NONE\<CR>"
+    else
+        echoerr "Unknown direction for file advance: " . a:dir
+    endif
+endfunction
+
 "" Format file with autoformat (capitalize to specify options)...
 "nmap          F  !Gformat -T4 -
 "nmap <silent> f  !Gformat -T4<CR>
