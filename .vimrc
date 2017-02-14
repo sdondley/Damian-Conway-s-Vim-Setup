@@ -348,7 +348,6 @@ function! ShiftLine()
 endfunction
 
 
-
 ""====[ I hate modelines ]===================
 " SD See https://www.cs.swarthmore.edu/help/vim/modelines.html for reference
 set modelines=0
