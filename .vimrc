@@ -557,11 +557,12 @@ function! File_advance (dir)
 endfunction
 
 " Format file with autoformat (capitalize to specify options)...
-nmap          F  !Gformat -T4 -
-nmap <silent> f  !Gformat -T4<CR>
-nmap          ff r<CR>fgej
-vmap          F :!format -T4 -all -
-vmap <silent> f :!format -T4 -all<CR>
+" SD cannot tell what this is uspposed to do
+"nmap          F  !Gformat -T4 -
+"nmap <silent> f  !Gformat -T4<CR>
+"nmap          ff r<CR>fgej
+"vmap          F :!format -T4 -all -
+"vmap <silent> f :!format -T4 -all<CR>
 
 " Install current file and swap to alternate file...
 Nmap IP [Install current file and swap to alternate] :!install -f %<CR>
