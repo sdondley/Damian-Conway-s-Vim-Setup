@@ -1,4 +1,4 @@
-:mapclear | mapclear <buffer> | mapclear! | mapclear! <buffer>
+":mapclear | mapclear <buffer> | mapclear! | mapclear! <buffer>
 nnoremap ;c 12G<C-v>GI"<ESC>1G
 nnoremap ;u 12G<C-v>Gx1G
 runtime plugin/git-basic.vim
@@ -7,7 +7,7 @@ runtime plugin/git-basic.vim
 " SD nifty. now I can do away with a command in my git-basic.vim file
 augroup VimReload
 autocmd!
-    autocmd BufWritePost [^(tmp/)].vimrc source %
+    autocmd BufWritePost *tup/.vimrc\|/home/steve/\.vimrc source %
 augroup END
 
 
@@ -156,14 +156,13 @@ call s:conditional_nnoremap( 'gw' )
 " SD this seems weird, it jumps you to the middle of the file
 nnoremap gn  gn<C-V>
 
-
 "====[ Use persistent undo ]=================
 " SD See http://vimdoc.sourceforge.net/htmldoc/undo.html for reference
 " SD undo hisotry file name is .viminfo
 
 if has('persistent_undo')
     " Save all undo files in a single location (less messy, more risky)...
-    set undodir=$HOME/.VIM_UNDO_FILES
+    "set undodir=/home/steve/.VIM_UNDO_FILES
 
     " Save a lot of back-history...
     set undolevels=5000
@@ -353,50 +352,50 @@ endfunction
 ""====[ I hate modelines ]===================
 " SD See https://www.cs.swarthmore.edu/help/vim/modelines.html for reference
 set modelines=0
-"
-"
-""=====[ Quicker access to Ex commands ]==================
-"
-"nmap ; :
-"vmap ; :Blockwise<SPACE>
-"
-"
-""=====[ Make Visual modes work better ]==================
-"
-"" Visual Block mode is far more useful that Visual mode (so swap the commands)...
-"nnoremap v <C-V>
-"nnoremap <C-V> v
-"
-"vnoremap v <C-V>
-"vnoremap <C-V> v
-"
-""Square up visual selections...
-"set virtualedit=block
-"
-"" Make BS/DEL work as expected in visual modes (i.e. delete the selected text)...
-"vmap <BS> x
-"
-"" Make vaa select the entire file...
-"vmap aa VGo1G
-"
-"
-""=====[ Make arrow keys move visual blocks around ]======================
-"
-"vmap <up>    <Plug>SchleppUp
-"vmap <down>  <Plug>SchleppDown
-"vmap <left>  <Plug>SchleppLeft
-"vmap <right> <Plug>SchleppRight
-"
-"vmap D       <Plug>SchleppDupLeft
-"vmap <C-D>   <Plug>SchleppDupLeft
-"
-"
-""=====[ Demo vim commands ]==============================
-"
+
+
+"=====[ Quicker access to Ex commands ]==================
+
+nmap ; :
+vmap ; :Blockwise<SPACE>
+
+
+"=====[ Make Visual modes work better ]==================
+
+" Visual Block mode is far more useful than Visual mode (so swap the commands)...
+nnoremap v <C-V>
+nnoremap <C-V> v
+
+vnoremap v <C-V>
+vnoremap <C-V> v
+
+"Square up visual selections...
+set virtualedit=block
+
+" Make BS/DEL work as expected in visual modes (i.e. delete the selected text)...
+vmap <BS> x
+
+" Make vaa select the entire file...
+vmap aa VGo1G
+
+
+"=====[ Make arrow keys move visual blocks around ]======================
+
+vmap <up>    <Plug>SchleppUp
+vmap <down>  <Plug>SchleppDown
+vmap <left>  <Plug>SchleppLeft
+vmap <right> <Plug>SchleppRight
+
+vmap D       <Plug>SchleppDupLeft
+vmap <C-D>   <Plug>SchleppDupLeft
+
+
+"=====[ Demo vim commands ]==============================
+" SD running the Nmap command is buggy leaving commented out
 "highlight WHITE_ON_BLACK ctermfg=white
 "
-"Nmap <silent> ;; [Demonstrate Vimscript block] :call DemoCommand()<CR>
-"vmap <silent> ;; :<C-U>call DemoCommand(1)<CR>
+"map <silent> ;; [Demonstrate Vimscript block] :call DemoCommand()<CR>
+"map <silent> ;; :<C-U>call DemoCommand(1)<CR>
 "
 "function! DemoCommand (...)
 "    " Remember how everything was before we did this...
@@ -431,30 +430,30 @@ set modelines=0
 "    " Remove the highlighting...
 "    call matchdelete(matchid)
 "endfunction
-"
-"
-""=====[ Toggle syntax highlighting ]==============================
-"
-"Nmap <silent> ;y [Toggle syntax highlighting]
-"                 \ : if exists("syntax_on") <BAR>
-"                 \    syntax off <BAR>
-"                 \ else <BAR>
-"                 \    syntax enable <BAR>
-"                 \ endif<CR>
-"
-"
-"
-""=====[ Always syntax highlight .patch and ToDo and .itn files ]=======================
-"
-"augroup PatchHighlight
-"    autocmd!
-"    autocmd BufEnter  *.patch,*.diff  let b:syntax_was_on = exists("syntax_on")
-"    autocmd BufEnter  *.patch,*.diff  syntax enable
-"    autocmd BufLeave  *.patch,*.diff  if !getbufvar("%","syntax_was_on")
-"    autocmd BufLeave  *.patch,*.diff      syntax off
-"    autocmd BufLeave  *.patch,*.diff  endif
-"augroup END
-"
+
+
+"=====[ Toggle syntax highlighting ]==============================
+
+Nmap <silent> ;y [Toggle syntax highlighting]
+                 \ : if exists("syntax_on") <BAR>
+                 \    syntax off <BAR>
+                 \ else <BAR>
+                 \    syntax enable <BAR>
+                 \ endif<CR>
+
+
+
+"=====[ Always syntax highlight .patch and ToDo and .itn files ]=======================
+
+augroup PatchHighlight
+    autocmd!
+    autocmd BufEnter  *.patch,*.diff  let b:syntax_was_on = exists("syntax_on")
+    autocmd BufEnter  *.patch,*.diff  syntax enable
+    autocmd BufLeave  *.patch,*.diff  if !getbufvar("%","syntax_was_on")
+    autocmd BufLeave  *.patch,*.diff      syntax off
+    autocmd BufLeave  *.patch,*.diff  endif
+augroup END
+" SD don't need this turning off
 "augroup TODOHighlight
 "    autocmd!
 "    autocmd BufEnter  *.todo,todo,ToDo,TODO  let b:syntax_was_on = exists("syntax_on")
@@ -473,69 +472,69 @@ set modelines=0
 "    autocmd BufLeave  *.itn       syntax off
 "    autocmd BufLeave  *.itn   endif
 "augroup END
-"
-"
-""=====[ Configure % key (via matchit plugin) ]==============================
-"
-"" Match angle brackets...
-"set matchpairs+=<:>,?:?
-"
-"
-""=====[ Miscellaneous features (mainly options) ]=====================
-"
-"set title           "Show filename in titlebar of window
-"set titleold=
-"
-"set nomore          "Don't page long listings
-"
-"set autowrite       "Save buffer automatically when changing files
-"set autoread        "Always reload buffer when external changes detected
-"
-""           +--Disable hlsearch while loading viminfo
-""           | +--Remember marks for last 500 files
-""           | |    +--Remember up to 10000 lines in each register
-""           | |    |      +--Remember up to 1MB in each register
-""           | |    |      |     +--Remember last 1000 search patterns
-""           | |    |      |     |     +---Remember last 1000 commands
-""           | |    |      |     |     |
-""           v v    v      v     v     v
-"set viminfo=h,'500,<10000,s1000,/1000,:1000
-"
-"set backspace=indent,eol,start      "BS past autoindents, line boundaries,
-"                                    "     and even the start of insertion
-"
-"set fileformats=unix,mac,dos        "Handle Mac and DOS line-endings
-"                                    "but prefer Unix endings
-"
-"
-"set wildmode=list:longest,full      "Show list of completions
-"                                    "  and complete as much as possible,
-"                                    "  then iterate full completions
-"
-"set infercase                       "Adjust completions to match case
-"
-"set noshowmode                      "Suppress mode change messages
-"
-"set updatecount=10                  "Save buffer every 10 chars typed
-"
-"
-"" Keycodes and maps timeout in 3/10 sec...
-"set timeout timeoutlen=300 ttimeoutlen=300
-"
+
+
+"=====[ Configure % key (via matchit plugin) ]==============================
+
+" Match angle brackets...
+set matchpairs+=<:>,?:?
+
+
+"=====[ Miscellaneous features (mainly options) ]=====================
+
+set title           "Show filename in titlebar of window
+set titleold=
+
+set nomore          "Don't page long listings
+
+set autowrite       "Save buffer automatically when changing files
+set autoread        "Always reload buffer when external changes detected
+
+"           +--Disable hlsearch while loading viminfo
+"           | +--Remember marks for last 500 files
+"           | |    +--Remember up to 10000 lines in each register
+"           | |    |      +--Remember up to 1MB in each register
+"           | |    |      |     +--Remember last 1000 search patterns
+"           | |    |      |     |     +---Remember last 1000 commands
+"           | |    |      |     |     |
+"           v v    v      v     v     v
+set viminfo=h,'500,<10000,s1000,/1000,:1000
+
+set backspace=indent,eol,start      "BS past autoindents, line boundaries,
+                                    "     and even the start of insertion
+
+set fileformats=unix,mac,dos        "Handle Mac and DOS line-endings
+                                    "but prefer Unix endings
+
+
+set wildmode=list:longest,full      "Show list of completions
+                                    "  and complete as much as possible,
+                                    "  then iterate full completions
+
+set infercase                       "Adjust completions to match case
+
+set noshowmode                      "Suppress mode change messages
+
+set updatecount=10                  "Save buffer every 10 chars typed
+
+
+" Keycodes and maps timeout in 3/10 sec...
+set timeout timeoutlen=300 ttimeoutlen=300
+
 "set thesaurus+=~/Documents/thesaurus    "Add thesaurus file for ^X^T
 "set dictionary+=~/Documents/dictionary  "Add dictionary file for ^X^K
-"
-"
-"set scrolloff=2                     "Scroll when 2 lines from top/bottom
-"
-"
-"
-""====[ Simplify textfile backups ]============================================
-"
-"" Back up the current file
-"Nmap BB [Back up current file]  :!bak -q %<CR><CR>:echomsg "Backed up" expand('%')<CR>
-"
-"
+
+" SD Changed this to 20
+set scrolloff=20                     "Scroll when 2 lines from top/bottom
+
+
+
+"====[ Simplify textfile backups ]============================================
+
+" Back up the current file
+Nmap BB [Back up current file]  :!bak -q %<CR><CR>:echomsg "Backed up" expand('%')<CR>
+
+
 ""=====[ Remap various keys to something more useful ]========================
 "
 "" Use space to jump down a page (like browsers do)...
