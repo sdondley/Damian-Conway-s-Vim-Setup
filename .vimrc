@@ -930,6 +930,7 @@ call SmartcomAddAction( '^\s*use\s\+\k\+', "",
 \                       'set complete=k~/.vim/perlmodules|set iskeyword+=:'
 \)
 
+" SD leaving these commented out, no need for them
 "" .itn itinerary files...
 "let s:flight_template = "\t___\nOn: \t___\nFrom:\t___\nTo: \t___\nDepart:\t___\nDTerm:\t___\nArrive:\t___\nATerm:\t___\nLength:\t___\nClass:\t___\nSeat:\t___\nBRef:\t___\nTrans:\t___\n"
 "let s:hotel_template = "\t___\nAddr:\t___\nPhone:\t___\nZone:\t___\nRate:\t___\nConfNo:\t___\n\nName:\t___\nEmail:\t___\nPhone:\t___\n"
@@ -956,146 +957,147 @@ call SmartcomAddAction( '^\s*use\s\+\k\+', "",
 "autocmd BufNewFile,BufRead  *.itn  nnoremap zd !!gen_itinerary_dates<CR>
 "
 "
-""=====[ General programming support ]===================================
-"
-"" Insert various shebang lines...
-"iab hbc #! /bin/csh
-"iab hbs #! /bin/sh
-"iab hbp #! /usr/bin/env polyperl<CR>use 5.020;<CR>use warnings;<CR>use experimentals;<CR>
-"iab hb6 #! /usr/bin/env perl6<CR>use v6;
-"
-"
-"" Execute current file polymorphically...
-"Nmap ,, [Execute current file] :w<CR>:!clear;echo;echo;run %<CR>
-"Nmap ,,, [Debug current file]  :w<CR>:!clear;echo;echo;run -d %<CR>
-"
-"
-""=====[ Show help files in a new tab, plus add a shortcut for helpg ]==============
-"
-"let g:help_in_tabs = 1
-"
-"nmap <silent> H  :let g:help_in_tabs = !g:help_in_tabs<CR>
-"
-""Only apply to .txt files...
-"augroup HelpInTabs
-"    autocmd!
-"    autocmd BufEnter  *.txt   call HelpInNewTab()
-"augroup END
-"
-""Only apply to help files...
-"function! HelpInNewTab ()
-"    if &buftype == 'help' && g:help_in_tabs
-"        "Convert the help window to a tab...
-"        execute "normal \<C-W>T"
-"    endif
-"endfunction
-"
-""Simulate a regular cmap, but only if the expansion starts at column 1...
-"function! CommandExpandAtCol1 (from, to)
-"    if strlen(getcmdline()) || getcmdtype() != ':'
-"        return a:from
-"    else
-"        return a:to
-"    endif
-"endfunction
-"
-""Expand hh -> helpg...
-"cmap <expr> hh CommandExpandAtCol1('hh','helpg ')
-"
-"
-""=====[ Cut and paste from MacOSX clipboard ]====================
-"
-"" When in Normal mode, paste over the current line...
-"nmap <silent> <C-P> 0d$:call NTransPaste()<CR>
-"
-"function! NTransPaste()
-"    " Remember the last yanked text...
-"    let reg_save = @@
-"
-"    " Grab the MacOSX clipboard contents via a shell command...
-"    let clipboard = system("pbtranspaste")
-"
-"    if clipboard =~ "\<C-K>"
-"        let clipboard = substitute(clipboard,"\<C-M>","",  'g')
-"        let clipboard = substitute(clipboard,"\<C-K>","\n",'g')
-"    else
-"        let clipboard = substitute(clipboard,"\<C-M>","\n",'g')
-"    endif
-"
-"    " Put them in the yank buffer...
-"    call setreg('@', clipboard, 'V')
-"
-"    " Paste and visually select them...
-"    silent exe "normal! P"
-"    silent exe "normal! V".len(substitute(clipboard,'[^\n]','','g'))."jO"
-"
-"    " Restore the previous yanked text...
-"    let @@ = reg_save
-"endfunction
-"
-"" When in Visual mode, paste over the selected region...
-"vmap <silent> <C-P> x:call VTransPaste(visualmode())<CR>
-"
-"function! VTransPaste(type)
-"    " Remember the last yanked text...
-"    let reg_save = @@
-"
-"    " Grab the MacOSX clipboard contents via a shell command...
-"    let clipboard = system("pbtranspaste")
-"    let clipboard = substitute(clipboard,"\<C-M>","",  'g')
-"    let clipboard = substitute(clipboard,"\<C-K>","\n",'g')
-"
-"    " Put them in the yank buffer...
-"    call setreg('@', clipboard, a:type)
-"
-"    " Paste them...
-"    silent exe "normal! P"
-"    silent exe "normal! V".len(substitute(clipboard,'[^\n]','','g'))."jO"
-"
-"    " Restore the previous yanked text...
-"    let @@ = reg_save
-"endfunction
-"
-"
-"" In Normal mode, yank the entire buffer...
-"nmap <silent> <C-C> :w !pbtranscopy<CR><CR>
-"
-"" In Visual mode, yank the selection...
-"vmap <silent> <C-C> :<C-U>call TransCopy(visualmode(), 1)<CR>
-"
-"function! TransCopy(type, ...)
-"    " Yank inclusively (but remember the previous setup)...
-"    let sel_save = &selection
-"    let &selection = "inclusive"
-"    let reg_save = @@
-"
-"    " Invoked from Visual mode, use '< and '> marks.
-"    if a:0
-"        silent exe "normal! `<" . a:type . "`>y"
-"
-"    " Or yank a line, if requested...
-"    elseif a:type == 'line'
-"        silent exe "normal! '[V']y"
-"
-"    " Or yank a block, if requested...
-"    elseif a:type == 'block'
-"        silent exe "normal! `[\<C-V>`]y"
-"
-"    " Or else, just yank the range...
-"    else
-"        silent exe "normal! `[v`]y"
-"    endif
-"
-"    " Send it to the MacOSX clipboard...
-"    call system("pbtranscopy", @@)
-"
-"    " Restore the previous setup...
-"    let &selection = sel_save
-"    let @@ = reg_save
-"endfunction
-"
-"
-""=====[ Convert file to different tabspacings ]=====================
+"=====[ General programming support ]===================================
+
+" SD these will have to be changed to suit my purposes
+" Insert various shebang lines...
+iab hbc #! /bin/csh
+iab hbs #! /bin/sh
+iab hbp #! /usr/bin/env polyperl<CR>use 5.020;<CR>use warnings;<CR>use experimentals;<CR>
+iab hb6 #! /usr/bin/env perl6<CR>use v6;
+
+" SD no idea what this does
+" Execute current file polymorphically...
+Nmap ,, [Execute current file] :w<CR>:!clear;echo;echo;run %<CR>
+Nmap ,,, [Debug current file]  :w<CR>:!clear;echo;echo;run -d %<CR>
+
+
+"=====[ Show help files in a new tab, plus add a shortcut for helpg ]==============
+
+let g:help_in_tabs = 1
+
+nmap <silent> H  :let g:help_in_tabs = !g:help_in_tabs<CR>
+
+"Only apply to .txt files...
+augroup HelpInTabs
+    autocmd!
+    autocmd BufEnter  *.txt   call HelpInNewTab()
+augroup END
+
+"Only apply to help files...
+function! HelpInNewTab ()
+    if &buftype == 'help' && g:help_in_tabs
+        "Convert the help window to a tab...
+        execute "normal \<C-W>T"
+    endif
+endfunction
+
+"Simulate a regular cmap, but only if the expansion starts at column 1...
+function! CommandExpandAtCol1 (from, to)
+    if strlen(getcmdline()) || getcmdtype() != ':'
+        return a:from
+    else
+        return a:to
+    endif
+endfunction
+
+"Expand hh -> helpg...
+cmap <expr> hh CommandExpandAtCol1('hh','helpg ')
+
+
+"=====[ Cut and paste from MacOSX clipboard ]====================
+
+" When in Normal mode, paste over the current line...
+nmap <silent> <C-P> 0d$:call NTransPaste()<CR>
+
+function! NTransPaste()
+    " Remember the last yanked text...
+    let reg_save = @@
+
+    " Grab the MacOSX clipboard contents via a shell command...
+    let clipboard = system("pbtranspaste")
+
+    if clipboard =~ "\<C-K>"
+        let clipboard = substitute(clipboard,"\<C-M>","",  'g')
+        let clipboard = substitute(clipboard,"\<C-K>","\n",'g')
+    else
+        let clipboard = substitute(clipboard,"\<C-M>","\n",'g')
+    endif
+
+    " Put them in the yank buffer...
+    call setreg('@', clipboard, 'V')
+
+    " Paste and visually select them...
+    silent exe "normal! P"
+    silent exe "normal! V".len(substitute(clipboard,'[^\n]','','g'))."jO"
+
+    " Restore the previous yanked text...
+    let @@ = reg_save
+endfunction
+
+" When in Visual mode, paste over the selected region...
+vmap <silent> <C-P> x:call VTransPaste(visualmode())<CR>
+
+function! VTransPaste(type)
+    " Remember the last yanked text...
+    let reg_save = @@
+
+    " Grab the MacOSX clipboard contents via a shell command...
+    let clipboard = system("pbtranspaste")
+    let clipboard = substitute(clipboard,"\<C-M>","",  'g')
+    let clipboard = substitute(clipboard,"\<C-K>","\n",'g')
+
+    " Put them in the yank buffer...
+    call setreg('@', clipboard, a:type)
+
+    " Paste them...
+    silent exe "normal! P"
+    silent exe "normal! V".len(substitute(clipboard,'[^\n]','','g'))."jO"
+
+    " Restore the previous yanked text...
+    let @@ = reg_save
+endfunction
+
+
+" In Normal mode, yank the entire buffer...
+nmap <silent> <C-C> :w !pbtranscopy<CR><CR>
+
+" In Visual mode, yank the selection...
+vmap <silent> <C-C> :<C-U>call TransCopy(visualmode(), 1)<CR>
+
+function! TransCopy(type, ...)
+    " Yank inclusively (but remember the previous setup)...
+    let sel_save = &selection
+    let &selection = "inclusive"
+    let reg_save = @@
+
+    " Invoked from Visual mode, use '< and '> marks.
+    if a:0
+        silent exe "normal! `<" . a:type . "`>y"
+
+    " Or yank a line, if requested...
+    elseif a:type == 'line'
+        silent exe "normal! '[V']y"
+
+    " Or yank a block, if requested...
+    elseif a:type == 'block'
+        silent exe "normal! `[\<C-V>`]y"
+
+    " Or else, just yank the range...
+    else
+        silent exe "normal! `[v`]y"
+    endif
+
+    " Send it to the MacOSX clipboard...
+    call system("pbtranscopy", @@)
+
+    " Restore the previous setup...
+    let &selection = sel_save
+    let @@ = reg_save
+endfunction
+
+" SD No idea what this does uses format command so leaving commented out
+"=====[ Convert file to different tabspacings ]=====================
 "
 "function! InferTabspacing ()
 "    return min(filter(map(getline(1,'$'),'strlen(matchstr(v:val, ''^\s\+''))'),'v:val != 0'))
@@ -1127,7 +1129,7 @@ call SmartcomAddAction( '^\s*use\s\+\k\+', "",
 "    endif
 "endfunction
 "
-"" Note, these are all T-<SHIFTED-DIGIT>, which is easier to type...
+" Note, these are all T-<SHIFTED-DIGIT>, which is easier to type...
 "nmap <silent> T@ :call NewTabSpacing(2)<CR>
 "nmap <silent> T# :call NewTabSpacing(3)<CR>
 "nmap <silent> T$ :call NewTabSpacing(4)<CR>
@@ -1143,43 +1145,45 @@ call SmartcomAddAction( '^\s*use\s\+\k\+', "",
 "nmap <silent> TF TST$
 "
 "
-""=====[ Correct common mistypings in-the-fly ]=======================
-"
-"iab    retrun  return
-"iab     pritn  print
-"iab       teh  the
-"iab      liek  like
-"iab  liekwise  likewise
-"iab      Pelr  Perl
-"iab      pelr  perl
-"iab        ;t  't
-"iab    Jarrko  Jarkko
-"iab    jarrko  jarkko
-"iab      moer  more
-"iab  previosu  previous
-"
-"
-""=====[ Tab handling ]======================================
-"
-"set tabstop=4      "Tab indentation levels every four columns
-"set shiftwidth=4   "Indent/outdent by four columns
-"set expandtab      "Convert all tabs that are typed into spaces
-"set shiftround     "Always indent/outdent to nearest tabstop
-"set smarttab       "Use shiftwidths at left margin, tabstops everywhere else
-"
-"
+"=====[ Correct common mistypings in-the-fly ]=======================
+
+iab    retrun  return
+iab     pritn  print
+iab       teh  the
+iab      liek  like
+iab  liekwise  likewise
+iab      Pelr  Perl
+iab      pelr  perl
+iab        ;t  't
+iab    Jarrko  Jarkko
+iab    jarrko  jarkko
+iab      moer  more
+iab  previosu  previous
+
+
+"=====[ Tab handling ]======================================
+" SD modified to my preference of 2 column tab spaces
+set tabstop=2      "Tab indentation levels every four columns
+set shiftwidth=2   "Indent/outdent by four columns
+set expandtab      "Convert all tabs that are typed into spaces
+set shiftround     "Always indent/outdent to nearest tabstop
+set smarttab       "Use shiftwidths at left margin, tabstops everywhere else
+
+
 "" Make the completion popup look menu-ish on a Mac...
-"highlight  Pmenu        ctermbg=white   ctermfg=black
-"highlight  PmenuSel     ctermbg=blue    ctermfg=white   cterm=bold
-"highlight  PmenuSbar    ctermbg=grey    ctermfg=grey
-"highlight  PmenuThumb   ctermbg=blue    ctermfg=blue
-"
-"" Make diffs less glaringly ugly...
-"highlight DiffAdd     cterm=bold ctermfg=green     ctermbg=black
-"highlight DiffChange  cterm=bold ctermfg=grey      ctermbg=black
-"highlight DiffDelete  cterm=bold ctermfg=black     ctermbg=black
-"highlight DiffText    cterm=bold ctermfg=magenta   ctermbg=black
-"
+highlight  Pmenu        ctermbg=white   ctermfg=black
+highlight  PmenuSel     ctermbg=blue    ctermfg=white   cterm=bold
+highlight  PmenuSbar    ctermbg=grey    ctermfg=grey
+highlight  PmenuThumb   ctermbg=blue    ctermfg=blue
+
+" Make diffs less glaringly ugly...
+highlight DiffAdd     cterm=bold ctermfg=green     ctermbg=black
+highlight DiffChange  cterm=bold ctermfg=grey      ctermbg=black
+highlight DiffDelete  cterm=bold ctermfg=black     ctermbg=black
+highlight DiffText    cterm=bold ctermfg=magenta   ctermbg=black
+
+" SD VimPoint is DC's method for creating a slideshow with VIM. Leaving
+" commented out
 ""=====[ Extra completions for VimPoint files ]==========================
 "
 "autocmd BufNewFile,BufRead  *.vpt   :call AddVimPointKeywords()
@@ -1191,73 +1195,73 @@ call SmartcomAddAction( '^\s*use\s\+\k\+', "",
 "endfunction
 "
 "
-"" "=====[ Grammar checking ]========================================
-"
-"highlight GRAMMARIAN_ERRORS_MSG   ctermfg=red   cterm=bold
-"highlight GRAMMARIAN_CAUTIONS_MSG ctermfg=white cterm=bold
-"
-"
-""=====[ Add or subtract comments ]===============================
-"
-"" Work out what the comment character is, by filetype...
-"autocmd FileType             *sh,awk,python,perl,perl6,ruby    let b:cmt = exists('b:cmt') ? b:cmt : '#'
-"autocmd FileType             vim                               let b:cmt = exists('b:cmt') ? b:cmt : '"'
-"autocmd BufNewFile,BufRead   *.vim,.vimrc                      let b:cmt = exists('b:cmt') ? b:cmt : '"'
-"autocmd BufNewFile,BufRead   *                                 let b:cmt = exists('b:cmt') ? b:cmt : '#'
-"autocmd BufNewFile,BufRead   *.p[lm],.t                        let b:cmt = exists('b:cmt') ? b:cmt : '#'
-"
-"" Work out whether the line has a comment then reverse that condition...
-"function! ToggleComment ()
-"    " What's the comment character???
-"    let comment_char = exists('b:cmt') ? b:cmt : '#'
-"
-"    " Grab the line and work out whether it's commented...
-"    let currline = getline(".")
-"
-"    " If so, remove it and rewrite the line...
-"    if currline =~ '^' . comment_char
-"        let repline = substitute(currline, '^' . comment_char, "", "")
-"        call setline(".", repline)
-"
-"    " Otherwise, insert it...
-"    else
-"        let repline = substitute(currline, '^', comment_char, "")
-"        call setline(".", repline)
-"    endif
-"endfunction
-"
-"" Toggle comments down an entire visual selection of lines...
-"function! ToggleBlock () range
-"    " What's the comment character???
-"    let comment_char = exists('b:cmt') ? b:cmt : '#'
-"
-"    " Start at the first line...
-"    let linenum = a:firstline
-"
-"    " Get all the lines, and decide their comment state by examining the first...
-"    let currline = getline(a:firstline, a:lastline)
-"    if currline[0] =~ '^' . comment_char
-"        " If the first line is commented, decomment all...
-"        for line in currline
-"            let repline = substitute(line, '^' . comment_char, "", "")
-"            call setline(linenum, repline)
-"            let linenum += 1
-"        endfor
-"    else
-"        " Otherwise, encomment all...
-"        for line in currline
-"            let repline = substitute(line, '^\('. comment_char . '\)\?', comment_char, "")
-"            call setline(linenum, repline)
-"            let linenum += 1
-"        endfor
-"    endif
-"endfunction
-"
-"" Set up the relevant mappings
-"nmap <silent> # :call ToggleComment()<CR>j0
-"vmap <silent> # :call ToggleBlock()<CR>
-"
-"
+" "=====[ Grammar checking ]========================================
+
+highlight GRAMMARIAN_ERRORS_MSG   ctermfg=red   cterm=bold
+highlight GRAMMARIAN_CAUTIONS_MSG ctermfg=white cterm=bold
+
+
+"=====[ Add or subtract comments ]===============================
+
+" Work out what the comment character is, by filetype...
+autocmd FileType             *sh,awk,python,perl,perl6,ruby    let b:cmt = exists('b:cmt') ? b:cmt : '#'
+autocmd FileType             vim                               let b:cmt = exists('b:cmt') ? b:cmt : '"'
+autocmd BufNewFile,BufRead   *.vim,.vimrc                      let b:cmt = exists('b:cmt') ? b:cmt : '"'
+autocmd BufNewFile,BufRead   *                                 let b:cmt = exists('b:cmt') ? b:cmt : '#'
+autocmd BufNewFile,BufRead   *.p[lm],.t                        let b:cmt = exists('b:cmt') ? b:cmt : '#'
+
+" Work out whether the line has a comment then reverse that condition...
+function! ToggleComment ()
+    " What's the comment character???
+    let comment_char = exists('b:cmt') ? b:cmt : '#'
+
+    " Grab the line and work out whether it's commented...
+    let currline = getline(".")
+
+    " If so, remove it and rewrite the line...
+    if currline =~ '^' . comment_char
+        let repline = substitute(currline, '^' . comment_char, "", "")
+        call setline(".", repline)
+
+    " Otherwise, insert it...
+    else
+        let repline = substitute(currline, '^', comment_char, "")
+        call setline(".", repline)
+    endif
+endfunction
+
+" Toggle comments down an entire visual selection of lines...
+function! ToggleBlock () range
+    " What's the comment character???
+    let comment_char = exists('b:cmt') ? b:cmt : '#'
+
+    " Start at the first line...
+    let linenum = a:firstline
+
+    " Get all the lines, and decide their comment state by examining the first...
+    let currline = getline(a:firstline, a:lastline)
+    if currline[0] =~ '^' . comment_char
+        " If the first line is commented, decomment all...
+        for line in currline
+            let repline = substitute(line, '^' . comment_char, "", "")
+            call setline(linenum, repline)
+            let linenum += 1
+        endfor
+    else
+        " Otherwise, encomment all...
+        for line in currline
+            let repline = substitute(line, '^\('. comment_char . '\)\?', comment_char, "")
+            call setline(linenum, repline)
+            let linenum += 1
+        endfor
+    endif
+endfunction
+
+" Set up the relevant mappings
+nmap <silent> # :call ToggleComment()<CR>j0
+vmap <silent> # :call ToggleBlock()<CR>
+
+
 ""=====[ Highlight cursor ]===================
 "
 "" Inverse highlighting for cursor...
