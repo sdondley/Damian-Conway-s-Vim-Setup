@@ -1,4 +1,4 @@
-":mapclear | mapclear <buffer> | mapclear! | mapclear! <buffer>
+:mapclear | mapclear <buffer> | mapclear! | mapclear! <buffer>
 nnoremap ;c 12G<C-v>GI"<ESC>1G
 nnoremap ;u 12G<C-v>Gx1G
 runtime plugin/git-basic.vim
