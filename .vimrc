@@ -1,7 +1,7 @@
 " SD ===== my vim changes ========
 set number
 syntax on
-nnoremap nn :set number!<CR>
+nnoremap <F5> :set number!<CR>
 ":mapclear | mapclear <buffer> | mapclear! | mapclear! <buffer>
 "nnoremap ;c 12G<C-v>GI"<ESC>1G
 "nnoremap ;u 12G<C-v>Gx1G
@@ -165,7 +165,7 @@ nnoremap gn  gn<C-V>
 
 if has('persistent_undo')
     " Save all undo files in a single location (less messy, more risky)...
-    "set undodir=/home/steve/.VIM_UNDO_FILES
+    set undodir=/home/steve/.VIM_UNDO_FILES
 
     " Save a lot of back-history...
     set undolevels=5000
@@ -434,7 +434,7 @@ vmap <C-D>   <Plug>SchleppDupLeft
 "endfunction
 
 
-"=====[ Toggle syntax highlighting ]==============================
+"*=====[ Toggle syntax highlighting ]==============================
 
 Nmap <silent> ;y [Toggle syntax highlighting]
                  \ : if exists("syntax_on") <BAR>
@@ -932,6 +932,7 @@ call SmartcomAdd( '^\s*sub',   EOL,    " ___ (___) {\n___\n}\n___",            {
 call SmartcomAddAction( '^\s*use\s\+\k\+', "",
 \                       'set complete=k~/.vim/perlmodules|set iskeyword+=:'
 \)
+call SmartcomAdd( 'has',       EOL, " '___' => (is => '___', isa => '___', lazy => '___', default => '___' )", {'filetype':'perl'} )
 
 " SD leaving these commented out, no need for them
 "" .itn itinerary files...
