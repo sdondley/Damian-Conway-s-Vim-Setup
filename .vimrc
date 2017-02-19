@@ -2,12 +2,24 @@
 set number
 syntax on
 nnoremap <F5> :set number!<CR>
+:imap jw <Esc>
+:imap wj <Esc>
+
+" fugitive (git) mappings
+nnoremap gs :Gstatus<CR>
+
+" cycle through open tabs
+nnoremap [n :tabn<CR>
+
+" === End my changes ===
+
 ":mapclear | mapclear <buffer> | mapclear! | mapclear! <buffer>
 "nnoremap ;c 12G<C-v>GI"<ESC>1G
 "nnoremap ;u 12G<C-v>Gx1G
 "runtime plugin/git-basic.vim
 
-""=====[ Convert to Unicode defaults ]===============================
+
+"=====[ Convert to Unicode defaults ]===============================
 
 setglobal termencoding=utf-8 fileencodings=
 scriptencoding utf-8
@@ -515,7 +527,8 @@ set wildmode=list:longest,full      "Show list of completions
 
 set infercase                       "Adjust completions to match case
 
-set noshowmode                      "Suppress mode change messages
+" SD commented out
+"set noshowmode                      "Suppress mode change messages
 
 set updatecount=10                  "Save buffer every 10 chars typed
 
